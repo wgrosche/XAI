@@ -18,7 +18,7 @@ Duffing Oscillator Equation of motion, given x0,v0 and t it returns x_dot, v_dot
 def eom(u, t, gamma):
     alpha=-1
     beta=1
-    delta=0.3
+    delta=1#0.3
     gamma=gamma
     omega=1.2
     x, dx = u[0], u[1]
@@ -61,14 +61,14 @@ def sample_many_traj(num_samples, gamma = 0.37):
 
 def main():
     #Generate the data
-    X_train, y_train = sample_many_traj(int(1e6))
+    X_train, y_train = sample_many_traj(int(1e7))
     X_test, y_test = sample_many_traj(int(1e5))
     
     #Save the generated data in pd dataframes
-    pd.DataFrame(X_train, columns=['x0','v0','t']).to_csv("X_train_euler.csv")
-    pd.DataFrame(y_train, columns=['xt','vt']).to_csv("y_train_euler.csv")
-    pd.DataFrame(X_test, columns=['x0','v0','t']).to_csv("X_test_euler.csv")
-    pd.DataFrame(y_test, columns=['xt','vt']).to_csv("y_test_euler.csv")
+    pd.DataFrame(X_train, columns=['x0','v0','t']).to_csv("X_train_delta1.csv")
+    pd.DataFrame(y_train, columns=['xt','vt']).to_csv("y_train_delta1.csv")
+    pd.DataFrame(X_test, columns=['x0','v0','t']).to_csv("X_test_delta1.csv")
+    pd.DataFrame(y_test, columns=['xt','vt']).to_csv("y_test_delta1.csv")
 
 
 if __name__ == "__main__":
