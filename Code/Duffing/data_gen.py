@@ -8,7 +8,9 @@ Created on Mon May 17 15:03:54 2021
 import numpy as np
 from scipy.integrate import odeint
 import pandas as pd
-#import progressbar as pb
+import multiprocessing as mp
+
+import progressbar as pb
 
 """
 Duffing Oscillator Equation of motion, given x0,v0 and t it returns x_dot, v_dot
@@ -40,26 +42,26 @@ def sample_many_traj(num_samples, gamma = 0.37):
     #Define the t_range to draw from
     t_range = np.linspace(0, 50, 500, endpoint=False)
     #Generate num_samples samples
-    #with pb.ProgressBar(max_value=num_samples) as bar:
-    for i in range(num_samples):
-        #Generate random starting positions
-        x0 = (x_max - x_min) * np.random.random_sample() + x_min
-        v0 = (v_max - v_min) * np.random.random_sample() + v_min
-        #Generate a trajectory
-        func = lambda u,t: eom(u, t, gamma)
-        trajectory = odeint(func, [x0,v0], t_range)
-        #Sample a random point along the trajectory
-        t2_index = np.random.randint(0, len(t_range))
-        X[i,:] = [x0,v0,t_range[t2_index]]
-        y[i,:] = trajectory[t2_index,:]
-        #bar.update(i)
-        
+    with pb.ProgressBar(max_value=num_samples) as bar:
+        for i in range(num_samples):
+            #Generate random starting positions
+            x0 = (x_max - x_min) * np.random.random_sample() + x_min
+            v0 = (v_max - v_min) * np.random.random_sample() + v_min
+            #Generate a trajectory
+            func = lambda u,t: eom(u, t, gamma)
+            trajectory = odeint(func, [x0,v0], t_range)
+            #Sample a random point along the trajectory
+            t2_index = np.random.randint(0, len(t_range))
+            X[i,:] = [x0,v0,t_range[t2_index]]
+            y[i,:] = trajectory[t2_index,:]
+            bar.update(i)
+            
     return X, y
 
 
 def main():
     #Generate the data
-    X_train, y_train = sample_many_traj(int(10e7))
+    X_train, y_train = sample_many_traj(int(10e6))
     X_test, y_test = sample_many_traj(int(10e5))
     
     #Save the generated data in pd dataframes
