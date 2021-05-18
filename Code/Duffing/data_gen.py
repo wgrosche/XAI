@@ -61,8 +61,8 @@ def sample_many_traj(num_samples, gamma = 0.37):
 
 def main():
     #Generate the data
-    X_train, y_train = sample_many_traj(int(1e6))
-    X_test, y_test = sample_many_traj(int(1e5))
+    X_train, y_train = sample_many_traj(int(1e5))
+    X_test, y_test = sample_many_traj(int(1e4))
     
     #Save the generated data in pd dataframes
     pd.DataFrame(X_train, columns=['x0','v0','t']).to_csv("X_train_euler.csv")
