@@ -52,7 +52,7 @@ def sample_many_traj(num_samples, gamma = 0.37):
             trajectory = odeint(func, [x0,v0], t_range)
             #Sample a random point along the trajectory
             t2_index = np.random.randint(0, len(t_range))
-            X[i,:] = [x0,v0,t_range[t2_index]]
+            X[i,:] = [x0, v0, t_range[t2_index]]
             y[i,:] = trajectory[t2_index,:]
             bar.update(i)
             
@@ -66,9 +66,9 @@ def main():
     
     #Save the generated data in pd dataframes
     pd.DataFrame(X_train, columns=['x0','v0','t']).to_csv("X_train_euler.csv")
-    pd.DataFrame(y_train, columns=['x0','v0','t']).to_csv("y_train_euler.csv")
+    pd.DataFrame(y_train, columns=['xt','vt']).to_csv("y_train_euler.csv")
     pd.DataFrame(X_test, columns=['x0','v0','t']).to_csv("X_test_euler.csv")
-    pd.DataFrame(y_test, columns=['x0','v0','t']).to_csv("y_test_euler.csv")
+    pd.DataFrame(y_test, columns=['xt','vt']).to_csv("y_test_euler.csv")
 
 
 if __name__ == "__main__":
