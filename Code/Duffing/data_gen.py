@@ -8,7 +8,7 @@ Created on Mon May 17 15:03:54 2021
 import numpy as np
 from scipy.integrate import odeint
 import pandas as pd
-import multiprocessing as mp
+#import multiprocessing as mp
 
 import progressbar as pb
 
@@ -52,7 +52,7 @@ def sample_many_traj(num_samples, gamma = 0.37):
             trajectory = odeint(func, [x0,v0], t_range)
             #Sample a random point along the trajectory
             t2_index = np.random.randint(0, len(t_range))
-            X[i,:] = [x0,v0,t_range[t2_index]]
+            X[i,:] = [x0, v0, t_range[t2_index]]
             y[i,:] = trajectory[t2_index,:]
             bar.update(i)
             
@@ -61,14 +61,14 @@ def sample_many_traj(num_samples, gamma = 0.37):
 
 def main():
     #Generate the data
-    X_train, y_train = sample_many_traj(int(10e6))
-    X_test, y_test = sample_many_traj(int(10e5))
+    X_train, y_train = sample_many_traj(int(1e6))
+    X_test, y_test = sample_many_traj(int(1e5))
     
     #Save the generated data in pd dataframes
-    pd.DataFrame(X_train, columns=['x0','v0','t']).to_csv("X_train.csv")
-    pd.DataFrame(X_train, columns=['x0','v0','t']).to_csv("y_train.csv")
-    pd.DataFrame(X_train, columns=['x0','v0','t']).to_csv("X_test.csv")
-    pd.DataFrame(X_train, columns=['x0','v0','t']).to_csv("y_test.csv")
+    pd.DataFrame(X_train, columns=['x0','v0','t']).to_csv("X_train_euler.csv")
+    pd.DataFrame(y_train, columns=['xt','vt']).to_csv("y_train_euler.csv")
+    pd.DataFrame(X_test, columns=['x0','v0','t']).to_csv("X_test_euler.csv")
+    pd.DataFrame(y_test, columns=['xt','vt']).to_csv("y_test_euler.csv")
 
 
 if __name__ == "__main__":
