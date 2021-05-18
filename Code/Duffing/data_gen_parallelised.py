@@ -13,45 +13,45 @@ import multiprocessing as mp
 
 #import progressbar as pb
 
-class DataGenerator():
-    def __init__(self, gamma = 0.37, x_max = 2, x_min = -2, v_max = 1, v_min = -1):
-        self.x_max = x_max
-        self.x_min = x_min
-        self.v_max = v_max
-        self.v_min = v_min
-        self.t_range = np.linspace(0, 50, 500, endpoint=False)
-        self.gamma = gamma
-        #Initialise the output arrays
+# class DataGenerator():
+#     def __init__(self, gamma = 0.37, x_max = 2, x_min = -2, v_max = 1, v_min = -1):
+#         self.x_max = x_max
+#         self.x_min = x_min
+#         self.v_max = v_max
+#         self.v_min = v_min
+#         self.t_range = np.linspace(0, 50, 500, endpoint=False)
+#         self.gamma = gamma
+#         #Initialise the output arrays
         
-    def eom(self, u, t):
-        alpha=-1
-        beta=1
-        delta=0.3
-        gamma=self.gamma
-        omega=1.2
-        x, dx = u[0], u[1]
-        ddx= gamma * np.cos(omega * t) - (delta * dx + alpha*x + beta * x**3)
-        return [dx,ddx]
+#     def eom(self, u, t):
+#         alpha=-1
+#         beta=1
+#         delta=0.3
+#         gamma=self.gamma
+#         omega=1.2
+#         x, dx = u[0], u[1]
+#         ddx= gamma * np.cos(omega * t) - (delta * dx + alpha*x + beta * x**3)
+#         return [dx,ddx]
        
-    def sample_single_traj(self, i):
-        x0 = (self.x_max - self.x_min) * np.random.random_sample() + self.x_min
-        v0 = (self.v_max - self.v_min) * np.random.random_sample() + self.v_min
-        #Generate a trajectory
-        trajectory = odeint(self.eom, [x0,v0], self.t_range)
-        #Sample a random point along the trajectory
-        t2_index = np.random.randint(0, len(self.t_range))
-        Xi = [x0,v0,self.t_range[t2_index]]
-        yi = trajectory[t2_index,:] 
-        return Xi, yi
+#     def sample_single_traj(self, i):
+#         x0 = (self.x_max - self.x_min) * np.random.random_sample() + self.x_min
+#         v0 = (self.v_max - self.v_min) * np.random.random_sample() + self.v_min
+#         #Generate a trajectory
+#         trajectory = odeint(self.eom, [x0,v0], self.t_range)
+#         #Sample a random point along the trajectory
+#         t2_index = np.random.randint(0, len(self.t_range))
+#         Xi = [x0,v0,self.t_range[t2_index]]
+#         yi = trajectory[t2_index,:] 
+#         return Xi, yi
       
-    def generate(self, num_samples):
-        print("test")
-        self.X = np.empty((num_samples, 3))
-        self.y = np.empty((num_samples, 2))
-        pool = mp.Pool(mp.cpu_count())
-        res = pool.map(self.sample_single_traj, [sample for sample in range(num_samples)])
-        pool.close()
-        return res
+#     def generate(self, num_samples):
+#         print("test")
+#         self.X = np.empty((num_samples, 3))
+#         self.y = np.empty((num_samples, 2))
+#         pool = mp.Pool(mp.cpu_count())
+#         res = pool.map(self.sample_single_traj, [sample for sample in range(num_samples)])
+#         pool.close()
+#         return res
 
 """
 Duffing Oscillator Equation of motion, given x0,v0 and t it returns x_dot, v_dot
@@ -83,7 +83,9 @@ def gen_sample(sample):
     
 if __name__ == "__main__":
     #mp.freeze_support()
-   
+    global x_max, x_min, v_max, v_min 
+    global X, y
+    global t_range
     pool = mp.Pool(mp.cpu_count())
     num_samples = 1e8
     X = np.empty((num_samples, 3))
@@ -95,13 +97,8 @@ if __name__ == "__main__":
     v_min = -1
     #Define the t_range to draw from
     t_range = np.linspace(0, 50, 500, endpoint=False)
-    
-    
-        
-    
     pool.map(gen_sample, [sample for sample in range(num_samples)])
     pool.close()
-        
     pd.DataFrame(X, columns=['x0','v0','t']).to_csv("X_train.csv")
     pd.DataFrame(y, columns=['xt','vt']).to_csv("y_train.csv")
 #Generate num_samples samples
