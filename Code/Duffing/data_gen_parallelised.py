@@ -63,7 +63,7 @@ Duffing Oscillator Equation of motion, given x0,v0 and t it returns x_dot, v_dot
 Samples randomly from x0 in [-2,2], v0 in [-1,1]
 """
 
-def eom(self, u, t):
+def eom(u, t):
     alpha=-1
     beta=1
     delta=0.3
@@ -73,7 +73,7 @@ def eom(self, u, t):
     ddx= gamma * np.cos(omega * t) - (delta * dx + alpha*x + beta * x**3)
     return [dx,ddx]
 
-def gen_sample(sample):
+def gen_sample(sample, x_max = 2, x_min = -2, v_max = 1, v_min = -1, t_range = np.linspace(0, 50, 500, endpoint=False)):
     x0 = (x_max - x_min) * np.random.random_sample() + x_min
     v0 = (v_max - v_min) * np.random.random_sample() + v_min
     trajectory = odeint(eom, [x0,v0], t_range)
@@ -85,19 +85,17 @@ if __name__ == "__main__":
     #mp.freeze_support()
    
     pool = mp.Pool(mp.cpu_count())
-    num_samples = 1e8
+    num_samples = int(1e2)
     X = np.empty((num_samples, 3))
     y = np.empty((num_samples, 2))
     #Define bounds of the sampling
-    x_max = 2
-    x_min = -2
-    v_max = 1
-    v_min = -1
+    # x_max = 2
+    # x_min = -2
+    # v_max = 1
+    # v_min = -1
     #Define the t_range to draw from
-    t_range = np.linspace(0, 50, 500, endpoint=False)
+    # t_range = np.linspace(0, 50, 500, endpoint=False)
     
-    
-        
     
     pool.map(gen_sample, [sample for sample in range(num_samples)])
     pool.close()
