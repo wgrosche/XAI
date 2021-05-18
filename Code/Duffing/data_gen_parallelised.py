@@ -72,18 +72,6 @@ def eom(self, u, t):
     x, dx = u[0], u[1]
     ddx= gamma * np.cos(omega * t) - (delta * dx + alpha*x + beta * x**3)
     return [dx,ddx]
-    
-pool = mp.Pool(mp.cpu_count())
-num_samples = 1e8
-X = np.empty((num_samples, 3))
-y = np.empty((num_samples, 2))
-#Define bounds of the sampling
-x_max = 2
-x_min = -2
-v_max = 1
-v_min = -1
-#Define the t_range to draw from
-t_range = np.linspace(0, 50, 500, endpoint=False)
 
 def gen_sample(sample):
     x0 = (x_max - x_min) * np.random.random_sample() + x_min
@@ -93,12 +81,29 @@ def gen_sample(sample):
     X[sample,:] = [x0,v0,t_range[t2_index]]
     y[sample,:] = trajectory[t2_index,:]
     
-
-pool.map(gen_sample, [sample for sample in range(num_samples)])
-pool.close()
+if __name__ == "__main__":
+    #mp.freeze_support()
+   
+    pool = mp.Pool(mp.cpu_count())
+    num_samples = 1e8
+    X = np.empty((num_samples, 3))
+    y = np.empty((num_samples, 2))
+    #Define bounds of the sampling
+    x_max = 2
+    x_min = -2
+    v_max = 1
+    v_min = -1
+    #Define the t_range to draw from
+    t_range = np.linspace(0, 50, 500, endpoint=False)
     
-pd.DataFrame(X, columns=['x0','v0','t']).to_csv("X_train.csv")
-pd.DataFrame(y, columns=['xt','vt']).to_csv("y_train.csv")
+    
+        
+    
+    pool.map(gen_sample, [sample for sample in range(num_samples)])
+    pool.close()
+        
+    pd.DataFrame(X, columns=['x0','v0','t']).to_csv("X_train.csv")
+    pd.DataFrame(y, columns=['xt','vt']).to_csv("y_train.csv")
 #Generate num_samples samples
 #with pb.ProgressBar(max_value=num_samples) as bar:
     
