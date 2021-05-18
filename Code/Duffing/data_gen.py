@@ -65,10 +65,10 @@ def main():
     X_test, y_test = sample_many_traj(int(1e5))
     
     #Save the generated data in pd dataframes
-    pd.DataFrame(X_train, columns=['x0','v0','t']).to_csv("X_train.csv")
-    pd.DataFrame(y_train, columns=['x0','v0','t']).to_csv("y_train.csv")
-    pd.DataFrame(X_test, columns=['x0','v0','t']).to_csv("X_test.csv")
-    pd.DataFrame(y_test, columns=['x0','v0','t']).to_csv("y_test.csv")
+    pd.DataFrame(X_train, columns=['x0','v0','t']).to_csv("X_train_euler.csv")
+    pd.DataFrame(y_train, columns=['x0','v0','t']).to_csv("y_train_euler.csv")
+    pd.DataFrame(X_test, columns=['x0','v0','t']).to_csv("X_test_euler.csv")
+    pd.DataFrame(y_test, columns=['x0','v0','t']).to_csv("y_test_euler.csv")
 
 
 if __name__ == "__main__":
