@@ -49,49 +49,47 @@ def create_model(optimizer=Adam(learning_rate=0.001, beta_1=0.7),
     return model
 
 
+def main():
 
-callbacks = [tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=250),
-                tf.keras.callbacks.EarlyStopping(monitor='loss', patience=250)]
+    # wrap the model using the function
+    clf = KerasRegressor(build_fn=create_model, verbose=0)
 
-# wrap the model using the function
-clf = KerasRegressor(build_fn=create_model, verbose=0)
-
-# create parameter grid, as usual, but note that you can
-# vary other model parameters such as 'epochs' (and others 
-# such as 'batch_size' too)
-param_grid = {
-    'clf__steps_per_epoch':[100],
-    'clf__optimizer':['rmsprop','adam','adagrad'],
-    'clf__epochs':[100,200,500,1000,2000],
-    'clf__dropout':[0.1,0.2],
-    'clf__kernel_initializer':['glorot_uniform','normal','uniform'],
-    'clf__batch_size':[128,256,512,1024,2048],
-    'clf__validation_split':[0.05, 0.1],
-    'clf__shuffle':[True, False],
-    'clf__callbacks':[tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=15),
-                      tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=250),
-                      tf.keras.callbacks.EarlyStopping(monitor='loss', patience=15),
-                      tf.keras.callbacks.EarlyStopping(monitor='loss', patience=250),
-                      [tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=250),
-                      tf.keras.callbacks.EarlyStopping(monitor='loss', patience=250)],
-                      [tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=25),
-                      tf.keras.callbacks.EarlyStopping(monitor='loss', patience=25)]]
-}
+    # create parameter grid, as usual, but note that you can
+    # vary other model parameters such as 'epochs' (and others 
+    # such as 'batch_size' too)
+    param_grid = {
+        'clf__steps_per_epoch':[100],
+        'clf__optimizer':['rmsprop','adam','adagrad'],
+        'clf__epochs':[100,200,500,1000,2000],
+        'clf__dropout':[0.1,0.2],
+        'clf__kernel_initializer':['glorot_uniform','normal','uniform'],
+        'clf__batch_size':[128,256,512,1024,2048],
+        'clf__validation_split':[0.05, 0.1],
+        'clf__shuffle':[True, False],
+        'clf__callbacks':[tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=15),
+                          tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=250),
+                          tf.keras.callbacks.EarlyStopping(monitor='loss', patience=15),
+                          tf.keras.callbacks.EarlyStopping(monitor='loss', patience=250),
+                          [tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=250),
+                          tf.keras.callbacks.EarlyStopping(monitor='loss', patience=250)],
+                          [tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=25),
+                          tf.keras.callbacks.EarlyStopping(monitor='loss', patience=25)]]
+    }
 
 
-# just create the pipeline
-pipeline = Pipeline([
-    ('preprocess', StandardScaler()),
-    ('clf', clf) 
-])
+    # just create the pipeline
+    pipeline = Pipeline([
+        ('preprocess', StandardScaler()),
+        ('clf', clf) 
+    ])
 
-    
-# if you're not using a GPU, you can set n_jobs to something other than 1
-grid = GridSearchCV(pipeline, cv=3, param_grid=param_grid)
-grid.fit(X_train, y_train)
 
-pd.DataFrame(grid.cv_results).to_csv("Grid_Search_Results.csv")
+    # if you're not using a GPU, you can set n_jobs to something other than 1
+    grid = GridSearchCV(pipeline, cv=3, param_grid=param_grid)
+    grid.fit(X_train, y_train)
 
-    
+    pd.DataFrame(grid.cv_results).to_csv("Grid_Search_Results.csv")
+
+
     
     

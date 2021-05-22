@@ -14,7 +14,7 @@ import pandas as pd
 import progressbar as pb
 
 
-def eom(u, t, ):
+def eom(u, t):
     """
         Duffing Oscillator Equation of Motion
 
