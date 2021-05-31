@@ -96,7 +96,6 @@ def sample_many_traj(num_samples):
             #Generate a trajectory
             trajectory = odeint(eom, [x0,v0], t_range)
             for j in range(500):
-                t2_index = np.random.randint(0, len(t_range))
                 X[500*i+j,:] = [x0, v0, t_range[j]]
                 y[500*i+j,:] = trajectory[j,:]
             bar.update(i)
