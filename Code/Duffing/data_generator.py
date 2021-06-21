@@ -43,7 +43,7 @@ def eom(u, t):
     #Set system parameters
     alpha=-1
     beta=1
-    delta=10#0.3
+    delta=0.3
     gamma=0.37
     omega=1.2
     x, dx = u[0], u[1]
@@ -78,15 +78,16 @@ def sample_many_traj(num_samples):
             is a target sample (xt,vt)
     """
     #Initialise the output arrays
-    X = np.empty((num_samples*500, 3))
-    y = np.empty((num_samples*500, 2))
+    delay=0
+    X = np.empty((num_samples*(500-delay), 4))
+    y = np.empty((num_samples*(500-delay), 2))
     #Define bounds of the sampling
     x_max = 2
     x_min = -2
     v_max = 1
     v_min = -1
     #Define the t_range to draw from
-    t_range = np.linspace(0, 50, 500, endpoint=False)
+    t_range = np.linspace(0, 100, 500, endpoint=False)
     #Generate num_samples samples
     with pb.ProgressBar(max_value=num_samples) as bar:
         for i in range(num_samples):
@@ -95,25 +96,27 @@ def sample_many_traj(num_samples):
             v0 = (v_max - v_min) * np.random.random_sample() + v_min
             #Generate a trajectory
             trajectory = odeint(eom, [x0,v0], t_range)
-            for j in range(500):
-                X[500*i+j,:] = [x0, v0, t_range[j]]
-                y[500*i+j,:] = trajectory[j,:]
+            for j in range(0,500-delay):
+                X[(500-delay)*i+j,:] = [x0, v0, t_range[j+delay], np.random.random_sample()]
+                y[(500-delay)*i+j,:] = trajectory[j+delay,:]
             bar.update(i)
             
     return X, y
 
 
 def main():
-    suffix = "whole_traj"
+    suffix = "delta03_irrelevant"
     #Generate the data
     X_train, y_train = sample_many_traj(int(1e5))
-    X_test, y_test = sample_many_traj(int(1e3))
-    
     #Save the generated data in pd dataframes
-    pd.DataFrame(X_train, columns=['x0','v0','t']).to_csv("X_train_"+suffix+".csv")
-    pd.DataFrame(y_train, columns=['xt','vt']).to_csv("y_train_"+suffix+".csv")
-    pd.DataFrame(X_test, columns=['x0','v0','t']).to_csv("X_test_"+suffix+".csv")
-    pd.DataFrame(y_test, columns=['xt','vt']).to_csv("y_test_"+suffix+".csv")
+    pd.DataFrame(X_train, columns=['x0','v0','t','rand']).to_csv("Data/X_train_"+suffix+".csv")
+    pd.DataFrame(y_train, columns=['xt','vt']).to_csv("Data/y_train_"+suffix+".csv")
+
+
+    X_test, y_test = sample_many_traj(int(1e3))
+    #Save the generated data in pd dataframes
+    pd.DataFrame(X_test, columns=['x0','v0','t','rand']).to_csv("Data/X_test_"+suffix+".csv")
+    pd.DataFrame(y_test, columns=['xt','vt']).to_csv("Data/y_test_"+suffix+".csv")
 
 
 if __name__ == "__main__":

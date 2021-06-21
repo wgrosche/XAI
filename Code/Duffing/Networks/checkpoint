@@ -1,0 +1,2 @@
+model_checkpoint_path: "trainingdelta03_irrelevantcp.ckpt"
+all_model_checkpoint_paths: "trainingdelta03_irrelevantcp.ckpt"
