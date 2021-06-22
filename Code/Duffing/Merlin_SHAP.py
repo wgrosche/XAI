@@ -77,7 +77,7 @@ class TrueModel():
     def __init__(self, scaler):
         self.alpha=-1
         self.beta=1
-        self.delta=1#0.3
+        self.delta=0.3
         self.gamma=0.37
         self.omega=1.2
         self.scaler = scaler
