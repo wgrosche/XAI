@@ -7,8 +7,8 @@
 #SBATCH --ntasks=1
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=1
-#SBATCH --output=/data/user/grosche_w/XAI/XAI/Code/Duffing/wilke_shapley/out_%j.log
-#SBATCH --job-name=Wilke_SHAP
+#SBATCH --output=/data/user/grosche_w/XAI/XAI/Code/Duffing/datagen/out_%j.log
+#SBATCH --job-name=Wilke_datagen
 
 NOW=$(date +"%m-%d-%Y")
 NOW2=$(date +"%r")
@@ -23,7 +23,7 @@ START=$(date +%s)
 module load Python/3.7.4
 
 
-python3 Merlin_SHAP.py
+python3 data_generator.py
 
 
 END=$(date +%s)
