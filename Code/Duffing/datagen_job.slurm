@@ -17,10 +17,10 @@ echo ""
 START=$(date +%s)
 
 # Here activate an environment if you need to, and load modules
-# module use unstable
-# module load anaconda
-# conda activate /data/user/grosche_w/myenv
-module load Python/3.7.4
+module use unstable
+module load anaconda
+conda activate /data/user/grosche_w/myenv
+
 
 
 python3 data_generator.py
