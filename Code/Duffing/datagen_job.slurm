@@ -19,7 +19,7 @@ START=$(date +%s)
 # Here activate an environment if you need to, and load modules
 # module use unstable
 # module load anaconda
-# conda activate /psi/home/grosche_w/data/python_envs/myenv
+# conda activate /data/user/grosche_w/myenv
 module load Python/3.7.4
 
 
