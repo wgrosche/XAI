@@ -43,7 +43,7 @@ def eom(u, t):
     #Set system parameters
     alpha=-1
     beta=1
-    delta=0.3
+    delta=1#0.3
     gamma=0.37
     omega=1.2
     x, dx = u[0], u[1]
@@ -105,7 +105,7 @@ def sample_many_traj(num_samples):
 
 
 def main():
-    suffix = "delta03_irrelevant"
+    suffix = "delta1_irrelevant"
     #Generate the data
     X_train, y_train = sample_many_traj(int(1e5))
     #Save the generated data in pd dataframes
