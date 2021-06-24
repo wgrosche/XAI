@@ -7,7 +7,7 @@
 #SBATCH --ntasks=1
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=1
-#SBATCH --output=/data/user/grosche_w/XAI/XAI/Merlin/logs/run_1/out_%j.log
+#SBATCH --output=/data/user/grosche_w/XAI/XAI/Merlin/Logs/run_1/out_%j.log
 #SBATCH --job-name=Wilke_run_1
 
 NOW=$(date +"%m-%d-%Y")
