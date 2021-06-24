@@ -1,11 +1,11 @@
 from setuptools import setup
 
-setup(name='wilke_XAI',
-      version='0.1',
-      description='A plugin to say hello in several ways',
+setup(name='wilkeXAI',
+      version='0.1.1',
+      description='My XAI module for code slimming',
       url='http://ictshore.com/',
       author='Wilke Grosche',
       author_email='fwg@hotmail.co.uk',
       license='MIT',
-      packages=['wilke_XAI'],
+      packages=['wilkeXAI'],
       zip_safe=False)
