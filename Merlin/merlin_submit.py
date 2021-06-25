@@ -63,11 +63,13 @@ def MLModel():
     
 def main():
     # Define name for this run
+    verbose=True
     suffix = "Run_2"
     generator = DataGenerator()
     # Generate the data
-    X_train, y_train = generator.generate(num_samples=int(1e3))
-    X_test, y_test = generator.generate(num_samples=int(1e2))
+    X_train, y_train = generator.generate(num_samples=int(1e5), params = {'alpha' : [-1],'beta' : [1], 'gamma' :[0.37], 'delta' : [1,2], 'omega' : [1.2]})
+    X_test, y_test = generator.generate(num_samples=int(1e3), params = {'alpha' : [-1],'beta' : [1], 'gamma' :[0.37], 'delta' : [1,2], 'omega' : [1.2]})
+    
     
     # Scale the Data
     scaler = StandardScaler()
@@ -95,7 +97,7 @@ def main():
     callbacks = [tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=15),
                  tf.keras.callbacks.EarlyStopping(monitor='loss', patience=15)]
 
-    history=model.fit(X_train, y_train, steps_per_epoch=None, epochs=3, 
+    history=model.fit(X_train, y_train, steps_per_epoch=None, epochs=200, 
                       validation_split=0.2, batch_size=20364, shuffle=True, callbacks=callbacks, verbose=0)
     
     pd.DataFrame(history.history['loss']).to_csv("Networks/model_loss_"+suffix+".csv")
@@ -105,8 +107,11 @@ def main():
          'true': true_model}
        
     for exp_type in ['shap', 'lime', 'analytic']:
-        explainer_curr = fwg.wilke_explainer(models, X_train, X_test, y_test, explainer_type=exp_type, tolerance = 1)
+        if verbose: print(exp_type)
+        explainer_curr = fwg.wilke_explainer(models, X_train, X_test, y_test, explainer_type=exp_type, tolerance = 1, num_vals =100)
+        if verbose: print("explaining")
         explainer_curr.eval_explainer().to_csv("Results/"+exp_type+"/individual/"+suffix+".csv")
+        if verbose: print("aggregating")
         explainer_curr.aggregate().to_csv("Results/"+exp_type+"/aggregate/"+suffix+".csv")
 
     

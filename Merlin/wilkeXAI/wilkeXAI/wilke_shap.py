@@ -151,15 +151,16 @@ class wilke_explainer():
         if explainer_type=='shap':
              for mod in models:
                 self.explainers[mod] = shap.KernelExplainer((models[mod]).predict, self.background)
-        if explainer_type=='lime':
+                
+        elif explainer_type=='lime':
              for mod in models:
                 self.explainers[mod] = shap.other.LimeTabular((models[mod]).predict, 
                                                                      self.background, mode="regression")
-        if explainer_type=='analytic':
+        elif explainer_type=='analytic':
             for mod in models:
                 self.explainers[mod] = AnalyticExplainer(models[mod].predict, test_data.columns, test_labels.columns)
     
-    def choose_data(self, i, feature, num_features):
+    def choose_data(self, feature, i):
         """
             Chooses the data points on which the explainer will be evaluated for
             a given feature. First, removes any points where the prediction is
@@ -181,13 +182,14 @@ class wilke_explainer():
         vals = np.abs(np.linalg.norm((self.models['ml']).predict(self.test_data), axis=1) - 
                       np.linalg.norm(self.test_labels, axis=1))
         data_arr = self.test_data.iloc[np.where(vals < self.tolerance)]
-        where__ = np.ones_like(data_arr.values[:,i], dtype=bool)
-        for j in range(1,num_features):
-            where__ = np.multiply(where__, np.abs(data_arr.values[:,(i + j)%num_features])<self.tol)
+        where__ = np.ones_like(data_arr[feature].values, dtype=bool)
+        
+        for j in range(1,3):
+            where__ = np.multiply(where__, np.abs(data_arr.values[:,(i + j)%3])<self.tol)
         data_arr = data_arr.iloc[where__]
         data_arr = data_arr.iloc[np.sort(
             np.random.choice(data_arr.shape[0], np.min([self.num_vals, data_arr.shape[0]]), replace=False))]
-        return data_arr
+        return data_arr 
         
     def eval_explainer(self):
         """
@@ -199,17 +201,20 @@ class wilke_explainer():
                 with a multiindex (index, feature, contribution, model)
         """
         first_run = True
-        for i, __feature in enumerate(self.test_data.columns[:3]):
-            arr = self.choose_data(i, __feature, len(self.test_data.columns[:3]))
+        for i, __feature in enumerate(self.test_data.columns):
+            if __feature in ['x0','v0''t']:
+                arr = self.choose_data(__feature, i)
+            else:
+                arr = self.test_data.iloc[np.sort(np.random.choice(self.test_data.shape[0], 
+                                                                   self.num_vals, replace=False))]
             for __explainer in self.explainers:
                 if self.explainer_type=='shap':
                     __atts = self.explainers[__explainer].shap_values(arr)
                 if self.explainer_type=='lime':
                     __atts = self.explainers[__explainer].attributions(arr)
-                    
                 if self.explainer_type=='analytic':
                     __atts = self.explainers[__explainer].feature_att(arr)
-                    
+                
                 for j, __contribution in enumerate(self.test_labels.columns):
                     multi_index = [range(len(arr)), [__feature for i in range(len(arr))], 
                                    [__contribution for i in range(len(arr))],
@@ -219,12 +224,12 @@ class wilke_explainer():
                                                                  columns = self.test_data.columns, 
                                                                  index = pd.MultiIndex.from_arrays(multi_index, 
                                                                         names=('num', 'feature', 'contribution', 'model')))
+                        first_run = False
                     else:
                         self.feature_attributions = self.feature_attributions.append(pd.DataFrame(__atts[j], 
                                                                  columns = self.test_data.columns, 
                                                                  index = pd.MultiIndex.from_arrays(multi_index, 
                                                                         names=('num', 'feature', 'contribution', 'model'))))
-                    first_run = False
                     
         return self.feature_attributions
         
@@ -379,7 +384,11 @@ class TrueModel():
             --------
             y : pandas.DataFrame with columns xt,vt
         """
-        X = pd.DataFrame(self.scaler.inverse_transform(X[:,:3]), columns=['x0','v0','t'])
+        if type(X) == pd.core.frame.DataFrame:
+            X = pd.DataFrame(self.scaler.inverse_transform(X.values[:,:3]), columns=['x0','v0','t'])
+        elif type(X) == np.ndarray:
+            X = pd.DataFrame(self.scaler.inverse_transform(X[:,:3]), columns=['x0','v0','t'])
+        #X = pd.DataFrame(self.scaler.inverse_transform(X[:,:3]), columns=['x0','v0','t'])
         y = np.ones((np.shape(X)[0], 2))
         for i in range(0,np.shape(X)[0]):
             t_range = np.linspace(0, X['t'].iloc[i], 500, endpoint=False)
