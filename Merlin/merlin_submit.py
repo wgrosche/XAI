@@ -63,44 +63,49 @@ def MLModel():
     
 def main():
     # Define name for this run
-    suffix = "Run_1"
+    suffix = "Run_2"
     generator = DataGenerator()
     # Generate the data
-    X_train, y_train = generator.generate(num_samples=int(1e5))
-    X_test, y_test = generator.generate(num_samples=int(1e3))
+    X_train, y_train = generator.generate(num_samples=int(1e3))
+    X_test, y_test = generator.generate(num_samples=int(1e2))
     
     # Scale the Data
     scaler = StandardScaler()
 
-    scaler.fit(X_train.values)
-    scaler.transform(X_train.values, copy=False)
-    scaler.transform(X_test.values, copy = False)
+    scaler.fit(X_train.loc[:,'x0':'t'].values)
+    scaler.transform(X_train.loc[:,'x0':'t'].values, copy=False)
+    scaler.transform(X_test.loc[:,'x0':'t'].values, copy = False)
     
     model = MLModel()
     true_model = fwg.TrueModel(scaler, X_test)
     
     # Train Network
     # Model Weights Path
-    checkpoint_path = "Networks/training/"+suffix+"cp1.ckpt"
-    checkpoint_dir = os.path.dirname(checkpoint_path)
+    # checkpoint_path = "Networks/training/"+suffix+"cp1.ckpt"
+    # checkpoint_dir = os.path.dirname(checkpoint_path)
     
     # Create a callback that saves the model's weights
-    cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath=checkpoint_path,
-                                                     save_weights_only=True,
-                                                     verbose=1)
-    callbacks = [cp_callback,
-                 tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=15),
+    # cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath=checkpoint_dir,
+    #                                                  save_weights_only=True,
+    #                                                  verbose=1)
+    # callbacks = [cp_callback,
+    #              tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=15),
+    #              tf.keras.callbacks.EarlyStopping(monitor='loss', patience=15)]
+
+    callbacks = [tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=15),
                  tf.keras.callbacks.EarlyStopping(monitor='loss', patience=15)]
 
-
-    history=model.fit(X_train, y_train, steps_per_epoch=None, epochs=500, 
-                      validation_split=0.2, batch_size=20364, shuffle=True, callbacks=callbacks, verbose=1)
+    history=model.fit(X_train, y_train, steps_per_epoch=None, epochs=3, 
+                      validation_split=0.2, batch_size=20364, shuffle=True, callbacks=callbacks, verbose=0)
+    
+    pd.DataFrame(history.history['loss']).to_csv("Networks/model_loss_"+suffix+".csv")
+    pd.DataFrame(history.history['val_loss']).to_csv("Networks/model_val_loss_"+suffix+".csv")
     
     models = {'ml': model, 
          'true': true_model}
        
     for exp_type in ['shap', 'lime', 'analytic']:
-        explainer_curr = fwg.wilke_explainer(models, X_train, X_test, y_test, explainer_type=exp_type)
+        explainer_curr = fwg.wilke_explainer(models, X_train, X_test, y_test, explainer_type=exp_type, tolerance = 1)
         explainer_curr.eval_explainer().to_csv("Results/"+exp_type+"/individual/"+suffix+".csv")
         explainer_curr.aggregate().to_csv("Results/"+exp_type+"/aggregate/"+suffix+".csv")
 

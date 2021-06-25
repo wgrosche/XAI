@@ -155,7 +155,6 @@ class wilke_explainer():
              for mod in models:
                 self.explainers[mod] = shap.other.LimeTabular((models[mod]).predict, 
                                                                      self.background, mode="regression")
-                
         if explainer_type=='analytic':
             for mod in models:
                 self.explainers[mod] = AnalyticExplainer(models[mod].predict, test_data.columns, test_labels.columns)
@@ -200,8 +199,8 @@ class wilke_explainer():
                 with a multiindex (index, feature, contribution, model)
         """
         first_run = True
-        for i, __feature in enumerate(self.test_data.columns):
-            arr = self.choose_data(i, __feature, len(self.test_data.columns))
+        for i, __feature in enumerate(self.test_data.columns[:3]):
+            arr = self.choose_data(i, __feature, len(self.test_data.columns[:3]))
             for __explainer in self.explainers:
                 if self.explainer_type=='shap':
                     __atts = self.explainers[__explainer].shap_values(arr)
@@ -380,7 +379,7 @@ class TrueModel():
             --------
             y : pandas.DataFrame with columns xt,vt
         """
-        X = pd.DataFrame(self.scaler.inverse_transform(X), columns=self.cols)
+        X = pd.DataFrame(self.scaler.inverse_transform(X[:,:3]), columns=['x0','v0','t'])
         y = np.ones((np.shape(X)[0], 2))
         for i in range(0,np.shape(X)[0]):
             t_range = np.linspace(0, X['t'].iloc[i], 500, endpoint=False)
