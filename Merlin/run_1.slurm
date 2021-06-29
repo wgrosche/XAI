@@ -6,7 +6,8 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --ntasks-per-node=1
-#SBATCH --cpus-per-task=1
+#SBATCH --cpus-per-task=3
+#SBATCH --mem-per-cpu=16000
 #SBATCH --output=/data/user/grosche_w/XAI/XAI/Merlin/Logs/run_1_out_%j.log
 #SBATCH --job-name=Wilke_run_1
 
