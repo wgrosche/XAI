@@ -63,12 +63,13 @@ def MLModel():
     
 def main():
     # Define name for this run
+    data_parameters = {'alpha' : [-1],'beta' : [1], 'gamma' :[0.37], 'delta' : [2], 'omega' : [1.2]}
     verbose=True
-    suffix = "Run_2"
+    suffix = "delta_12"
     generator = DataGenerator()
     # Generate the data
-    X_train, y_train = generator.generate(num_samples=int(1e5), params = {'alpha' : [-1],'beta' : [1], 'gamma' :[0.37], 'delta' : [1,2], 'omega' : [1.2]})
-    X_test, y_test = generator.generate(num_samples=int(1e3), params = {'alpha' : [-1],'beta' : [1], 'gamma' :[0.37], 'delta' : [1,2], 'omega' : [1.2]})
+    X_train, y_train = generator.generate(num_samples=int(1e4), params = data_parameters)
+    X_test, y_test = generator.generate(num_samples=int(5e2), params = data_parameters)
     
     
     # Scale the Data
