@@ -341,7 +341,7 @@ class TrueModel():
     Class to represent the True Model of the Duffing oscillator.
     Uses the scipy odeint integrator to perform time evolution.
     """
-    def __init__(self, scaler, X):
+    def __init__(self, scaler, X, params= {'alpha' : [-1],'beta' : [1], 'gamma' :[0.37], 'delta' : [1], 'omega' : [1.2]}):
         """
             Intialise Model
 
@@ -350,11 +350,11 @@ class TrueModel():
             scaler : sklearn.preprocessing.Standardscaler object that has already been trained
             X : pd.DataFrame with columns giving the features
         """
-        self.alpha=-1
-        self.beta=1
-        self.delta=0.3
-        self.gamma=0.37
-        self.omega=1.2
+        self.alpha=params['alpha'][0]
+        self.beta=params['beta'][0]
+        self.delta=params['delta'][0]
+        self.gamma=params['gamma'][0]
+        self.omega=params['omega'][0]
         self.scaler = scaler
         self.cols = X.columns
         

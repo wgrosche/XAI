@@ -69,8 +69,9 @@ def main():
     generator = DataGenerator()
     # Generate the data
     X_train, y_train = generator.generate(num_samples=int(1e4), params = data_parameters)
+    generator.save(suffix=suffix+"_train_")
     X_test, y_test = generator.generate(num_samples=int(5e2), params = data_parameters)
-    
+    generator.save(suffix=suffix+"_test_")
     
     # Scale the Data
     scaler = StandardScaler()
@@ -80,7 +81,7 @@ def main():
     scaler.transform(X_test.loc[:,'x0':'t'].values, copy = False)
     
     model = MLModel()
-    true_model = fwg.TrueModel(scaler, X_test)
+    true_model = fwg.TrueModel(scaler, X_test, params=data_parameters)
     
     # Train Network
     # Model Weights Path
