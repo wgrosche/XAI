@@ -131,3 +131,4 @@ dmypy.json
 # Large Data Files
 Code_Backup/
 **/Data/**/*.csv
+*.svg

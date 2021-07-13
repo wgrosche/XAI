@@ -247,7 +247,7 @@ class wilke_explainer():
                 for __model in self.models:
                     sns.scatterplot(data = self.feature_attributions.xs((__feature, __contribution, __model), 
                                                       level=('feature', 'contribution', 'model')), 
-                                    x = self.feature_attributions.xs((__feature, __contribution, 'true'), 
+                                    x = self.feature_attributions.xs((__feature, __contribution, __model), 
                                                    level=('feature', 'contribution', 'model')).index,
                                     y = self.feature_attributions.xs((__feature, __contribution, __model), 
                                                  level=('feature', 'contribution', 'model'))[__feature],
@@ -341,7 +341,7 @@ class TrueModel():
     Class to represent the True Model of the Duffing oscillator.
     Uses the scipy odeint integrator to perform time evolution.
     """
-    def __init__(self, scaler, X, params= {'alpha' : [-1],'beta' : [1], 'gamma' :[0.37], 'delta' : [1], 'omega' : [1.2]}):
+    def __init__(self, scaler, X):
         """
             Intialise Model
 
@@ -350,15 +350,10 @@ class TrueModel():
             scaler : sklearn.preprocessing.Standardscaler object that has already been trained
             X : pd.DataFrame with columns giving the features
         """
-        self.alpha=params['alpha'][0]
-        self.beta=params['beta'][0]
-        self.delta=params['delta'][0]
-        self.gamma=params['gamma'][0]
-        self.omega=params['omega'][0]
         self.scaler = scaler
         self.cols = X.columns
         
-    def eom(self, u, t):
+    def eom(self, u, t, params = {'alpha' : [-1],'beta' : [1], 'gamma' :[0.37], 'delta' : [1], 'omega' : [1.2]}):
         """
             Equation of Motion for the Duffing Oscillator
 
@@ -369,10 +364,11 @@ class TrueModel():
 
         """
         x, dx = u[0], u[1]
-        ddx= self.gamma * np.cos(self.omega * t) - (self.delta * dx + self.alpha*x + self.beta * x**3)
+        ddx= params['gamma'][0] * np.cos(params['omega'][0] * t) - (params['delta'][0] * dx + params['alpha'][0]*x + params['beta'][0] * x**3)
+        
         return [dx,ddx]
     
-    def predict(self, X):
+    def predict(self, X, params = {'alpha' : [-1],'beta' : [1], 'gamma' :[0.37], 'delta' : [1], 'omega' : [1.2]}):
         """
             Calculates the temporal evolution of [X['x0'], X['v0']] to time X['t'].
 
@@ -384,10 +380,11 @@ class TrueModel():
             --------
             y : pandas.DataFrame with columns xt,vt
         """
+        eom = lambda u, t: self.eom(u, t, params = {'alpha' : X['alpha'],'beta' : [1], 'gamma' :[0.37], 'delta' : [1], 'omega' : [1.2]})
         if type(X) == pd.core.frame.DataFrame:
-            X = pd.DataFrame(self.scaler.inverse_transform(X.values[:,:3]), columns=['x0','v0','t'])
+            X = pd.DataFrame(self.scaler.inverse_transform(X.values), columns=X.columns)
         elif type(X) == np.ndarray:
-            X = pd.DataFrame(self.scaler.inverse_transform(X[:,:3]), columns=['x0','v0','t'])
+            X = pd.DataFrame(self.scaler.inverse_transform(X), columns=self.cols)
         #X = pd.DataFrame(self.scaler.inverse_transform(X[:,:3]), columns=['x0','v0','t'])
         y = np.ones((np.shape(X)[0], 2))
         for i in range(0,np.shape(X)[0]):
