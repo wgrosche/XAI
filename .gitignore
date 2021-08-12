@@ -132,3 +132,4 @@ dmypy.json
 Code_Backup/
 **/Data/**/*.csv
 *.svg
+**/Old_Data/**
