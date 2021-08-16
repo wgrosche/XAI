@@ -16,7 +16,6 @@ from scipy.fft import fft
 import matplotlib.pylab as plt
 import seaborn as sns
 import mpl_interactions.ipyplot as iplt
-sns.set_theme(context='notebook', style='darkgrid', palette='deep', font='sans-serif', font_scale=1, color_codes=True, rc=None)
 
 
 import shap as shap
@@ -26,11 +25,7 @@ try:
 except ImportError:
     pass
 
-# Enable Jupyter Notebook's intellisense
-%config IPCompleter.greedy=True
-%matplotlib inline
 
-%matplotlib notebook
 from ipywidgets import *
 import matplotlib
 import matplotlib.pyplot as plt
@@ -39,10 +34,6 @@ import matplotlib.pyplot as plt
 rng = np.random.RandomState(42)
 #tf.random.set_seed(42)
 np.random.seed(42)
-
-from __future__ import print_function
-from ipywidgets import interact, interactive, fixed, interact_manual
-import ipywidgets as widgets
 
 
 
@@ -119,14 +110,12 @@ class NumericExplainer():
 
 
     
-    def event_1(t, y):
+def event_1(t, y):
     return np.abs(y[0]) - 10
 
 def event_2(t, y):
     return np.abs(y[1]) - 10
 
-event_1.terminal = True
-event_2.terminal = True
 
 def generate(num_samples = int(5e1), samples=10, end_time=100, gridded=False):
         """
@@ -313,7 +302,7 @@ def vals_to_df(values, data, save=False, explainer = "lime", suffix = None):
 
 class Bootstrapper():
     def __init__(model, data, explainer_type = 'kernel', num_straps = 50, back_size = 100, 
-                 features = features, labels = labels, lime_models = [true_lime_1, true_lime_2], suffix = suffix)
+                 features = features, labels = labels, lime_models = [true_lime_1, true_lime_2], suffix = suffix):
         self.explainer_type = explainer_type
         self.model = model
         self.data = data
@@ -334,7 +323,7 @@ class Bootstrapper():
             elif self.explainer_type == 'sample':
                 exp_i = shap.SampleExplainer(self.model, background_i)
                 shapper = exp_i.shap_values(X)
-            else self.explainer_type == 'lime':
+            elif self.explainer_type == 'lime':
                 exp_i = MyLime(self.lime_models[0], self.lime_models[1], background_i, mode='regression')
                 shapper = exp_i.attributions(X)
             self.values[i,0,:] = shapper[0]
@@ -344,7 +333,7 @@ class Bootstrapper():
                 self.mean_std_arr[0, i, j] = np.mean(self.values[:,i,j])
                 self.mean_std_arr[1, i, j] = np.std(self.values[:,i,j])
             
-    return self.mean_std_arr
+        return self.mean_std_arr
     
     def to_df(self):
         self.bootstrap_df = self.x_list.copy()
@@ -394,8 +383,8 @@ class MyLime(shap.other.LimeTabular):
         for i in tqdm(range(X.shape[0]), desc="Generating Data…", ascii=False, ncols=75):
         #for i in range(X.shape[0]):
             for j in range(self.out_dim):
-                    exp1 = self.explainer.explain_instance(X[i], self.model, labels=range(self.out_dim), 
-                                                           num_features=num_features, num_samples=500)
+                exp1 = self.explainer.explain_instance(X[i], self.model, labels=range(self.out_dim), 
+                                                       num_features=num_features, num_samples=500)
                 exp2 = self.explainer.explain_instance(X[i], self.flipped, labels=range(self.out_dim), 
                                                        num_features=num_features, num_samples=500)
                 for k, v in exp1.local_exp[1]:
