@@ -383,7 +383,7 @@ class MyLime(shap.other.LimeTabular):
         if str(type(X)).endswith("pandas.core.frame.DataFrame'>"):
             X = X.values
             
-        out = [np.zeros(X.shape) for j in range(self.out_dim+1)]
+        out = [np.zeros(X.shape) for j in range(len(self.model))]
         for i in range(X.shape[0]):
             exp1 = self.explainer.explain_instance(X[i], self.model[0], labels=range(self.out_dim), 
                                                     num_features=num_features, num_samples=num_samples)
