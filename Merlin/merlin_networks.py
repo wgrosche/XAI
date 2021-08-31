@@ -176,7 +176,7 @@ Define Parameter Configuration to Model
     delta : float, amount of damping
     omega : float, angular frequency of the periodic driving force
 """   
-alpha = -1.0
+alpha = 1.0
 beta = 1.0
 gamma = 0.37
 delta = 1.0
