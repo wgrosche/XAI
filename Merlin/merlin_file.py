@@ -334,7 +334,7 @@ class Bootstrapper():
                 exp_i = shap.SampleExplainer(self.model, background_i)
                 shapper = exp_i.shap_values(X)
             elif self.explainer_type == 'lime':
-                exp_i = MyLime(self.model[0], self.model[1], background_i, mode='regression')
+                exp_i = MyLime(self.model, background_i, mode="regression")
                 shapper = exp_i.attributions(X)
             self.values[i,0,:] = shapper[0]
             self.values[i,1,:] = shapper[1]
@@ -376,9 +376,13 @@ class MyLime(shap.other.LimeTabular):
             data = data.values
         self.data = data
         self.explainer = lime.lime_tabular.LimeTabularExplainer(data, mode=mode)
+        self.out_dim = 1#self.model(data[0:1]).shape[1]
             
     def attributions(self, X, num_samples=500, num_features=None):
-        num_features = X.shape[1] if num_features is None else num_features
+        try:
+            num_features = X.shape[1] if num_features is None else num_features
+        except:
+            num_features = 1
         
         if str(type(X)).endswith("pandas.core.frame.DataFrame'>"):
             X = X.values
@@ -408,7 +412,7 @@ def main():
         delta : float, amount of damping
         omega : float, angular frequency of the periodic driving force
     """   
-    alpha = 2.3
+    alpha = -0.1
     beta = -0.1
     gamma = 0.37
     delta = 0.3
@@ -453,8 +457,7 @@ def main():
     big_df = big_df.append(num_df)
 
     big_df.to_csv("Results/big_dataframe"+suffix+".csv")
-
-    bootstrapper = Bootstrapper(model, X)
+    bootstrapper = Bootstrapper(lime_models, X, duffing.features, duffing.labels, suffix, 'lime')
     bootstrapper.calculate(save = True)
 
 
