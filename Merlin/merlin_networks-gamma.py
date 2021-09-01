@@ -253,4 +253,4 @@ history=model.fit(X_train, y_train, steps_per_epoch=None, epochs=500,
 loss = model.evaluate(X_test, y_test, verbose=1)
 print("Trained model, loss: {:5.2f}%".format(loss))
 
-model.save("Models/ml_model_"+suffix)
+model.save("Models/gamma_ml_model_"+suffix)
