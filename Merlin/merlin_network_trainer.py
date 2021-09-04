@@ -28,7 +28,8 @@ class Duffing():
     """
         Class for the Duffing Oscillator
     """
-    def __init__(self, parameters = {'alpha': 0.3, 'beta': -0.1, 'gamma': 0.37, 'delta': 0.3, 'omega': 1.2}, labels = ['xt','vt'], features = ['x0','v0','t','rand','gamma'], scaler = None):
+    def __init__(self, parameters = {'alpha': 0.3, 'beta': -0.1, 'gamma': 0.37, 'delta': 0.3, 'omega': 1.2}, 
+                 labels = ['xt','vt'], features = ['x0','v0', 't', 'rand', 'gamma', 'f_of_x'], scaler = None, f_of_x = None, time = True, num_gammas = 1):
         """
             Define Parameter Configuration to Model
 
@@ -45,7 +46,12 @@ class Duffing():
         self.features = features
         self.scaler = scaler
         self.suffix = "params_"+str(parameters['alpha'])+"_"+str(parameters['beta'])+"_"+str(parameters['gamma'])+"_"+str(parameters['delta'])+"_"+str(parameters['omega'])
+        self.num_gammas = num_gammas
+        self.f_of_x = f_of_x
+        
 
+            
+        
     def eom(self, t, u):
         """
             Duffing Oscillator Equation of Motion
@@ -76,7 +82,7 @@ class Duffing():
     termination_event.terminal = True
 
 
-    def generate(self, num_samples = int(5e1), samples=10, end_time=100, gridded=False, num_gammas = 50):
+    def generate(self, num_samples = int(5e1), samples=10, end_time=100, gridded=False, num_gammas = 1):
         """
             Generates training samples using scipy.integrate.odeint
             to calculate the temporal evolution of a Duffing system.
@@ -99,14 +105,18 @@ class Duffing():
             y : array((num_samples,2)), each entry in the array
                 is a target sample (xt,vt)
         """
-            
+        if num_gammas > 1:
+            self.num_gammas = num_gammas
+            self.suffix = self.suffix + '_gamma_on'
+            self.features = self.features + ['gamma']
+        self.scaler = None
         #Define bounds of the sampling
         x_min = -2
         x_max = 2
         v_min = -2
         v_max = 2
         #Initialise the output arrays        
-        X = np.empty((num_samples*(samples)*num_gammas, len(np.hstack((self.features, self.labels)))))
+        X = np.empty((num_samples*samples*self.num_gammas, len(np.hstack((self.features, self.labels)))))
         #Define the t_range to draw from
         t_range = np.linspace(0, end_time, 100, endpoint=False)
         t_vals = np.sort(np.random.choice(t_range, size = samples, replace=False))
@@ -116,51 +126,54 @@ class Duffing():
             #Generate num_samples samples
             for i, x0 in tqdm(enumerate(x_range), desc="Generating Data…", ascii=False, ncols=75):
                 for v0 in v_range:
-                    for gamma in gamma_range:
+                    for gamma in range(self.num_gammas):
+                        if num_gammas > 1:
+                            self.parameters['gamma'] = gamma / self.num_gammas
+                        
                     #Generate a trajectory
-                        self.parameters['gamma'] = gamma
                         trajectory = solve_ivp(self.eom, [0, end_time], [x0,v0], t_eval = t_vals, events = [self.termination_event])
                         traj_cutoff =  samples - len(trajectory.y[0])
                         if traj_cutoff > 0:
                             trajectory.y[0] = np.append(trajectory.y[0].reshape(-1,1), 10.0*np.ones(traj_cutoff))
                             trajectory.y[1] = np.append(trajectory.y[1].reshape(-1,1), 10.0*np.ones(traj_cutoff))
-                        X[i*samples:(i+1)*samples,:] = np.hstack((x0*np.ones(samples).reshape(-1,1), 
-                                                            v0*np.ones(samples).reshape(-1,1), 
-                                                            t_vals.reshape(-1,1), 
-                                                            np.random.uniform(-1,1,samples).reshape(-1,1),
-                                                            trajectory.y[0].reshape(-1,1), 
-                                                            trajectory.y[1].reshape(-1,1),
-                                                            gamma*np.ones(samples).reshape(-1,1)))
+
+                        val_range_low = i*samples*self.num_gammas+gamma*samples
+                        val_range_high = i*samples*self.num_gammas+(gamma+1)*samples
+                        X[val_range_low:val_range_high,:] = np.hstack((x0*np.ones(samples).reshape(-1,1), 
+                                                       v0*np.ones(samples).reshape(-1,1),
+                                                       t_vals.reshape(-1,1),
+                                                       np.random.uniform(-1,1,samples).reshape(-1,1),
+                                                       self.parameters['gamma']*np.ones(samples).reshape(-1,1),
+                                                       self.f_of_x(x0,v0)*np.ones(samples).reshape(-1,1),
+                                                       trajectory.y[0].reshape(-1,1), 
+                                                       trajectory.y[1].reshape(-1,1)))
 
         else:
             #Generate num_samples samples
             for i in tqdm(range(num_samples), desc="Generating Data…", ascii=False, ncols=75):
-                for n in range(num_gammas):
-                    gamma = np.random.random_sample()
-                    #Generate random starting positions
-                    x0 = (x_max - x_min) * np.random.random_sample() + x_min
-                    v0 = (v_max - v_min) * np.random.random_sample() + v_min 
+                #Generate random starting positions
+                x0 = (x_max - x_min) * np.random.random_sample() + x_min
+                v0 = (v_max - v_min) * np.random.random_sample() + v_min
+                for j in range(self.num_gammas):
+                    if self.num_gammas > 1:
+                        self.parameters['gamma'] = np.random.random_sample()
                     #Generate a trajectory
                     trajectory = solve_ivp(self.eom, [0, end_time], [x0,v0], t_eval = t_vals, events = [self.termination_event])
                     traj_cutoff =  samples - len(trajectory.y[0])
                     if traj_cutoff > 0:
-                        x_traj = np.vstack((trajectory.y[0].reshape(-1,1), 10.0*np.ones(traj_cutoff).reshape(-1,1)))
-                        v_traj = np.vstack((trajectory.y[1].reshape(-1,1), 10.0*np.ones(traj_cutoff).reshape(-1,1)))
-                        X[i*num_gammas*samples+n*samples:i*num_gammas*samples+(n+1)*samples,:] = np.hstack((x0*np.ones(samples).reshape(-1,1), 
-                                                                v0*np.ones(samples).reshape(-1,1), 
-                                                                t_vals.reshape(-1,1), 
-                                                                np.random.uniform(-1,1,samples).reshape(-1,1),
-                                                                x_traj, 
-                                                                v_traj,
-                                                                gamma*np.ones(samples).reshape(-1,1)))
-                    else:
-                        X[i*num_gammas*samples+n*samples:i*num_gammas*samples+(n+1)*samples,:] = np.hstack((x0*np.ones(samples).reshape(-1,1), 
-                                                                v0*np.ones(samples).reshape(-1,1), 
-                                                                t_vals.reshape(-1,1), 
-                                                                np.random.uniform(-1,1,samples).reshape(-1,1),
-                                                                trajectory.y[0].reshape(-1,1), 
-                                                                trajectory.y[1].reshape(-1,1),
-                                                                gamma*np.ones(samples).reshape(-1,1)))
+                        trajectory.y[0] = np.append(trajectory.y[0].reshape(-1,1), 10.0*np.ones(traj_cutoff))
+                        trajectory.y[1] = np.append(trajectory.y[1].reshape(-1,1), 10.0*np.ones(traj_cutoff))
+
+                    val_range_low = i*samples*self.num_gammas+j*samples
+                    val_range_high = i*samples*self.num_gammas+(j+1)*samples
+                    X[val_range_low:val_range_high,:] = np.hstack((x0*np.ones(samples).reshape(-1,1), 
+                                                   v0*np.ones(samples).reshape(-1,1),
+                                                   t_vals.reshape(-1,1),
+                                                   np.random.uniform(-1,1,samples).reshape(-1,1),
+                                                   self.parameters['gamma']*np.ones(samples).reshape(-1,1),
+                                                   self.f_of_x(x0,v0)*np.ones(samples).reshape(-1,1),
+                                                   trajectory.y[0].reshape(-1,1), 
+                                                   trajectory.y[1].reshape(-1,1)))
         
         self.X_df = pd.DataFrame(X, columns = np.hstack((self.features, self.labels)))
         return self.X_df
@@ -170,6 +183,9 @@ class Duffing():
             self.scaler = MinMaxScaler(feature_range=[0,1])
             self.X_df[self.features] = self.scaler.fit_transform(self.X_df[self.features].values)
         else: return
+    def energy(self, x, v):
+        return 0.5*v**2 + 0.5*self.parameters['alpha']*x**2 +0.25*self.parameters['beta']*x**4
+        
 
         
 """
@@ -189,8 +205,11 @@ gamma = 0.37
 delta = 1.0
 omega = 1.2
 
+def energy(x, v):
+    return 0.5*v**2 + 0.5*alpha*x**2 +0.25*beta*x**4
+
 parameters_now = {'alpha': alpha, 'beta': beta, 'gamma': gamma, 'delta': delta, 'omega':omega}
-duffing = Duffing(parameters = parameters_now)
+duffing = Duffing(parameters = parameters_now, num_gammas = 20, f_of_x = energy)
 eom = duffing.eom
 suffix = duffing.suffix
 
