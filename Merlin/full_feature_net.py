@@ -6,9 +6,18 @@ from tqdm import tqdm
 
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.model_selection import train_test_split
+from sklearn.model_selection import ParameterGrid
 
 from scipy.integrate import odeint, solve_ivp
 from scipy.fft import fft
+
+
+import shap as shap
+try:
+    import lime
+    import lime.lime_tabular    
+except ImportError:
+    pass
 
 # Machine Learning Libraries
 import tensorflow as tf
@@ -265,7 +274,7 @@ duffing.scale_features()
 X = duffing.X_df[duffing.features]
 y = duffing.X_df[duffing.labels]
 
-
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, random_state=42)
 """
 Define and Create Model
 """
