@@ -48,6 +48,7 @@ class Duffing():
         self.suffix = "params_"+str(parameters['alpha'])+"_"+str(parameters['beta'])+"_"+str(parameters['gamma'])+"_"+str(parameters['delta'])+"_"+str(parameters['omega'])
         self.num_gammas = num_gammas
         self.f_of_x = f_of_x
+        self.model_type = '_all'
         
 
             
@@ -184,14 +185,14 @@ parameters_now = {'alpha': alpha, 'beta': beta, 'gamma': gamma, 'delta': delta, 
 duffing = Duffing(parameters = parameters_now, num_gammas = 20, f_of_x = energy)
 eom = duffing.eom
 suffix = duffing.suffix
+model_type = duffing.model_type
 
 end_time = 100
-duffing.generate(100000, samples = 100, end_time = end_time)
+duffing.generate(100, samples = 100, end_time = end_time)
 duffing.scale_features()
 X = duffing.X_df[duffing.features]
 y = duffing.X_df[duffing.labels]
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, random_state=42)
 
 """
 Define and Create Model
@@ -244,4 +245,45 @@ history=model.fit(X_train, y_train, steps_per_epoch=None, epochs=500,
 loss = model.evaluate(X_test, y_test, verbose=1)
 print("Trained model, loss: {:5.2f}%".format(loss))
 
-model.save("Models/gamma_ml_model_"+suffix)
+model.save("Models/gamma_ml_model_"+suffix+model_type)
+
+def ml_x(X):
+    return model.predict(X)[0]
+def ml_v(X):
+    return model.predict(X)[1]
+
+explainers = ["kernel", "sampling", "lime", "numeric"]
+true_lime = [duffing.predict_x, duffing.predict_v]
+ml_lime = [ml_x, ml_v]
+models = {"true" : duffing.predict, "ml" : model.predict}
+lime_models = {"true" : true_lime, "ml" : ml_lime}
+
+
+background = shap.sample(X_test, 100)
+choice = X.iloc[np.sort(np.random.choice(X_test.shape[0], 100, replace =False))]
+
+
+big_df = pd.DataFrame()
+for model in models:
+    for explainer in explainers:
+        print(explainer + model)
+        if explainer == "kernel":
+            temp_explainer = shap.KernelExplainer(models[model], background)
+            temp_vals = temp_explainer.shap_values(choice)
+        elif explainer == "sampling":
+            temp_explainer = shap.SamplingExplainer(models[model], background)
+            temp_vals = temp_explainer.shap_values(choice)
+        elif explainer == "lime":
+            temp_explainer = MyLime(lime_models[model], choice, mode='regression')
+            temp_vals = temp_explainer.attributions(choice)
+        elif explainer == "numeric":
+            temp_explainer = NumericExplainer(models[model], duffing.features, duffing.labels, h = 0.001)
+            temp_vals = temp_explainer.feature_att(choice)
+        else:
+            print("not a valid explainer type")
+        big_df = big_df.append(duffing.vals_to_df(temp_vals, 
+                                                        choice, save=False, explainer = explainer, suffix = suffix+model))
+        
+        
+big_df.to_csv("Results/explainer_dataframe_"+suffix+model_type+".csv")  
+
