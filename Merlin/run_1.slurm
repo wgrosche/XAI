@@ -1,14 +1,14 @@
 #!/bin/bash -l
     
-#SBATCH --partition=daily  # Set this to partition=general if time is more than 24h
-#SBATCH --time=18:30:00
+#SBATCH --partition=general  # Set this to partition=general if time is more than 24h
+#SBATCH --time=48:30:00
 #SBATCH --clusters=merlin6
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=3
 #SBATCH --mem-per-cpu=16000
-#SBATCH --output=/data/user/grosche_w/XAI/XAI/Merlin/Logs/run_1_out_%j.log
+#SBATCH --output=/data/user/grosche_w/XAI/XAI/Merlin/Logs/run_1_feature_net_out_%j.log
 #SBATCH --job-name=Wilke_run_1
 
 NOW=$(date +"%m-%d-%Y")
@@ -24,7 +24,7 @@ conda activate /data/user/grosche_w/myenv
 
 
 
-python3 merlin_submit.py
+python3 full_feature_net.py
 
 
 END=$(date +%s)
