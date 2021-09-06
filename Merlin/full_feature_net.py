@@ -470,10 +470,10 @@ Define Parameter Configuration to Model
     delta : float, amount of damping
     omega : float, angular frequency of the periodic driving force
 """   
-alpha = [-1.0, -0.1, 1.0]
-beta = [-1.0, -0.1, 1.0]
+alpha = [-1.0, -0.1, 0, 0.1, 1.0]
+beta = [-1.0, -0.1, 0, 0.1, 1.0]
 gamma = [0.2, 0.28, 0.37, 0.5, 0.65]
-delta = [0.3, 1.0]
+delta = [-0.1, 0, 0.3, 1.0]
 omega = [0, 0.3, 1.2]
 
 parameters = {'alpha': alpha, 'beta': beta, 'gamma': gamma, 'delta': delta, 'omega':omega}
