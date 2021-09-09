@@ -480,7 +480,7 @@ parameters = {'alpha': alpha, 'beta': beta, 'gamma': gamma, 'delta': delta, 'ome
 
 parameter_grid = ParameterGrid(parameters)
 
-for dict_param in parameter_grid:
+def main_func(dict_param):
     duffing = Duffing(parameters = dict_param)
     eom = duffing.eom
     suffix = duffing.suffix
@@ -575,3 +575,4 @@ for dict_param in parameter_grid:
         
     big_df.to_csv("Results/explainer_dataframe_"+suffix+".csv")  
 
+Parallel(n_jobs=-1)(delayed(main_func)(dict_param) for dict_param in parameter_grid)

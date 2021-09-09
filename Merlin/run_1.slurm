@@ -1,12 +1,12 @@
 #!/bin/bash -l
     
 #SBATCH --partition=general  # Set this to partition=general if time is more than 24h
-#SBATCH --time=48:30:00
+#SBATCH --time=23:30:00
 #SBATCH --clusters=merlin6
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --ntasks-per-node=1
-#SBATCH --cpus-per-task=3
+#SBATCH --cpus-per-task=6
 #SBATCH --mem-per-cpu=16000
 #SBATCH --output=/data/user/grosche_w/XAI/XAI/Merlin/Logs/run_1_feature_net_out_%j.log
 #SBATCH --job-name=Wilke_run_1
@@ -24,7 +24,7 @@ conda activate /data/user/grosche_w/myenv
 
 
 
-python3 full_feature_net.py
+python3 full_feature_net_parallel.py
 
 
 END=$(date +%s)
