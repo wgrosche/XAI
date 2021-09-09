@@ -3,7 +3,8 @@ import numpy as np
 import pandas as pd
 import os
 from tqdm import tqdm
-
+import pickle
+from joblib import Parallel, delayed
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.model_selection import train_test_split
 from sklearn.model_selection import ParameterGrid
@@ -506,6 +507,9 @@ def main_func(dict_param):
     # pipe = make_pipeline(scaler, model)
 
     history=model.fit(X_train, y_train, steps_per_epoch=None, epochs=500, validation_split=0.2, batch_size=1024, shuffle=True, callbacks=callbacks, verbose=0)
+    
+    with open('/trainHistoryDict_'+suffix, 'wb') as file_pi:
+        pickle.dump(history.history, file_pi)
 
     loss = model.evaluate(X_test, y_test, verbose=1)
     print("Trained model, loss: {:5.2f}%".format(loss))
@@ -529,6 +533,9 @@ def main_func(dict_param):
 
     history_simple=simple_model.fit(X_train, y_train, steps_per_epoch=None, epochs=500, validation_split=0.2, batch_size=1024, shuffle=True, callbacks=callbacks, verbose=0)
 
+    with open('/trainHistoryDict_simple_'+suffix, 'wb') as file_pi:
+        pickle.dump(history_simple.history, file_pi)
+        
     loss = simple_model.evaluate(X_test, y_test, verbose=1)
     print("Trained model, loss: {:5.2f}%".format(loss))
 
