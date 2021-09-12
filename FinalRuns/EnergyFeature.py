@@ -445,7 +445,7 @@ for dict_param in parameter_list:
     print("Trained model, loss: {:5.2f}%".format(loss))
 
     model.save("Models/ml_model_"+suffix)
-    with open('/trainHistoryDict_'+suffix, 'wb') as file_pi:
+    with open('Models/TrainingHistory/'+suffix, 'wb') as file_pi:
         pickle.dump(history.history, file_pi)
     def ml_x(X):
         return model.predict(X)[:,0]
@@ -461,7 +461,7 @@ for dict_param in parameter_list:
     # pipe = make_pipeline(scaler, model)
 
     history_simple=simple_model.fit(X_train, y_train, steps_per_epoch=None, epochs=500, validation_split=0.2, batch_size=1024, shuffle=True, callbacks=callbacks, verbose=0)
-    with open('/trainHistoryDict_simple_'+suffix, 'wb') as file_pi:
+    with open('Models/TrainingHistory/simple_'+suffix, 'wb') as file_pi:
         pickle.dump(history_simple.history, file_pi)
     loss = simple_model.evaluate(X_test, y_test, verbose=1)
     print("Trained model, loss: {:5.2f}%".format(loss))
