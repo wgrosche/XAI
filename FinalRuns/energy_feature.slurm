@@ -8,7 +8,7 @@
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=2
 #SBATCH --mem-per-cpu=16000
-#SBATCH --output=/data/user/grosche_w/XAI/XAI/Merlin/Logs/energy_feature_out_%j.log
+#SBATCH --output=/data/user/grosche_w/XAI/XAI/FinalRuns/Logs/energy_feature_out_%j.log
 #SBATCH --job-name=Wilke_run_1
 
 NOW=$(date +"%m-%d-%Y")

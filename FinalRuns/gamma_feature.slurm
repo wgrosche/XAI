@@ -8,7 +8,7 @@
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=2
 #SBATCH --mem-per-cpu=16000
-#SBATCH --output=/data/user/grosche_w/XAI/XAI/Merlin/Logs/random_feature_out_%j.log
+#SBATCH --output=/data/user/grosche_w/XAI/XAI/FinalRuns/Logs/gamma_feature_out_%j.log
 #SBATCH --job-name=Wilke_run_1
 
 NOW=$(date +"%m-%d-%Y")
@@ -24,7 +24,7 @@ conda activate /data/user/grosche_w/myenv
 
 
 
-python3 RandomFeature.py
+python3 GammaFeature.py
 
 
 END=$(date +%s)
