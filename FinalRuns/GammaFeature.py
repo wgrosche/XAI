@@ -165,12 +165,13 @@ class Duffing():
             self.scale_features()
         if type(X) == pd.core.frame.DataFrame:
             X_temp = pd.DataFrame(self.scaler.inverse_transform(X.values), columns=X.columns)
+        elif type(X) == pd.core.series.Series:
+            X_temp = pd.DataFrame(self.scaler.inverse_transform(X.values.reshape(1,-1)), columns=X.index)
         elif type(X) == np.ndarray:
             X_temp = pd.DataFrame(self.scaler.inverse_transform(X), columns=self.features)
 
         y = np.ones((np.shape(X_temp)[0], 2))
         for i in range(0,np.shape(X_temp)[0]):
-            self.parameters['gamma'] = X_temp['gamma'].iloc[i]
             traj = solve_ivp(self.eom, [0, X_temp['t'].iloc[i]], [X_temp['x0'].iloc[i], X_temp['v0'].iloc[i]], 
                             t_eval = None, events = [self.termination_event])
             y[i] = [traj.y[0][-1], traj.y[1][-1]]
@@ -503,7 +504,7 @@ for dict_param in parameter_list:
             else:
                 print("not a valid explainer type")
             big_df = big_df.append(duffing.vals_to_df(temp_vals, 
-                                                            choice, save=False, explainer = explainer, suffix = suffix))
+                                                            choice, explainer = explainer, suffix = suffix))
 
         
     big_df.to_csv("Results/explainer_dataframe_"+suffix+".csv")  
