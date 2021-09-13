@@ -163,8 +163,6 @@ class Duffing():
 
         y = np.ones((np.shape(X_temp)[0], 2))
         for i in range(0,np.shape(X_temp)[0]):
-            for j in self.parameters:
-                self.parameters[j] = X_temp[j].iloc[i]
             traj = solve_ivp(self.eom, [0, X_temp['t'].iloc[i]], [X_temp['x0'].iloc[i], X_temp['v0'].iloc[i]], 
                             t_eval = None, events = [self.termination_event])
             y[i] = [traj.y[0][-1], traj.y[1][-1]]
