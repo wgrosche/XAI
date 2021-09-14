@@ -39,7 +39,7 @@ class Duffing():
         Class for the Duffing Oscillator
     """
     def __init__(self, parameters = {'alpha': [0.3], 'beta': [-0.1], 'gamma': [0.37], 'delta': [0.3], 'omega': [1.2]}, 
-                 labels = ['xt','vt'], features = ['x0','v0', 't', 'rand'], scaler = None):
+                 labels = ['xt','vt'], features = ['x0','v0', 't', 'gamma'], scaler = None):
         """
             Define Parameter Configuration to Model
 
@@ -55,10 +55,8 @@ class Duffing():
         self.features = features
         self.scaler = scaler
         self.parameters = parameters
-        self.suffix = "random_feature_params_"+str(parameters['alpha'])+"_"+str(parameters['beta'])+"_"+str(parameters['gamma'])+"_"+str(parameters['delta'])+"_"+str(parameters['omega'])
-
-
-            
+        self.suffix = "gamma_feature_params_"+str(parameters['alpha'])+"_"+str(parameters['beta'])+"_"+str(parameters['delta'])+"_"+str(parameters['omega'])
+          
         
     def eom(self, t, u):
         """
@@ -122,32 +120,35 @@ class Duffing():
         x_max = 2
         v_min = -2
         v_max = 2
+        gamma_range = np.linspace(0,1, 100)
         #Initialise the output arrays        
-        X = np.empty((num_samples*samples, len(np.hstack((self.features, self.labels)))))
+        X = np.empty((num_samples*samples*len(gamma_range), len(np.hstack((self.features, self.labels)))))
         #Define the t_range to draw from
         t_range = np.linspace(0, end_time, 100, endpoint=False)
         t_vals = np.sort(np.random.choice(t_range, size = samples, replace=False))
 
         #Generate num_samples samples
         for i in tqdm(range(num_samples), desc="Generating Data…", ascii=False, ncols=75):
-            #Generate random starting positions
-            x0 = (x_max - x_min) * np.random.random_sample() + x_min
-            v0 = (v_max - v_min) * np.random.random_sample() + v_min
+            for j, gamma in enumerate(gamma_range):
+                self.parameters['gamma'] = gamma
+                #Generate random starting positions
+                x0 = (x_max - x_min) * np.random.random_sample() + x_min
+                v0 = (v_max - v_min) * np.random.random_sample() + v_min
 
-            #Generate a trajectory
-            trajectory = solve_ivp(self.eom, [0, end_time], [x0,v0], t_eval = t_vals, events = [self.termination_event])
-            traj_cutoff =  samples - len(trajectory.y[0])
-            traj_x = np.append(trajectory.y[0].reshape(-1,1), 10.0*np.ones(traj_cutoff).reshape(-1,1))
-            traj_v = np.append(trajectory.y[1].reshape(-1,1), 10.0*np.ones(traj_cutoff).reshape(-1,1))
-            val_range_low = i*samples
-            val_range_high = (i+1)*samples
-            X[val_range_low:val_range_high,:] = np.hstack((x0*np.ones(samples).reshape(-1,1), 
-                                           v0*np.ones(samples).reshape(-1,1),
-                                           t_vals.reshape(-1,1),
-                                           np.random.uniform(-1,1,samples).reshape(-1,1),
-                                           traj_x.reshape(-1,1), 
-                                           traj_v.reshape(-1,1)))
-        
+                #Generate a trajectory
+                trajectory = solve_ivp(self.eom, [0, end_time], [x0,v0], t_eval = t_vals, events = [self.termination_event])
+                traj_cutoff =  samples - len(trajectory.y[0])
+                traj_x = np.append(trajectory.y[0].reshape(-1,1), 10.0*np.ones(traj_cutoff).reshape(-1,1))
+                traj_v = np.append(trajectory.y[1].reshape(-1,1), 10.0*np.ones(traj_cutoff).reshape(-1,1))
+                val_range_low = i*samples*len(gamma_range) + (j)*samples
+                val_range_high = i*samples*len(gamma_range) + (j+1)*samples
+                X[val_range_low:val_range_high,:] = np.hstack((x0*np.ones(samples).reshape(-1,1), 
+                                               v0*np.ones(samples).reshape(-1,1),
+                                               t_vals.reshape(-1,1),
+                                               gamma*np.ones(samples).reshape(-1,1),
+                                               traj_x.reshape(-1,1), 
+                                               traj_v.reshape(-1,1)))
+
         self.X_df = pd.DataFrame(X, columns = np.hstack((self.features, self.labels)))
         return self.X_df
 
@@ -391,12 +392,12 @@ def SimpleModel():
 
 
 
-parameter_list = [{'alpha' : 1.0, 'beta' : 1.0, 'gamma' : 0.37, 'delta' : 0.3, 'omega' : 1.2}, 
-                  {'alpha' : 1.0, 'beta' : -0.5, 'gamma' : 0.37, 'delta' : 0.3, 'omega' : 1.2},
-                  {'alpha' : 1.0, 'beta' : -0.5, 'gamma' : 0.37, 'delta' : 1.0, 'omega' : 1.2}, 
-                  {'alpha' : 1.0, 'beta' : -0.5, 'gamma' : 0.5, 'delta' : 0.3, 'omega' : 1.2},
-                  {'alpha' : 1.0, 'beta' : -0.5, 'gamma' : 0.37, 'delta' : 0.0, 'omega' : 1.2}
-                  ]
+parameter_list = [{'alpha' : -1.0, 'beta' : 1.0, 'gamma' : 0.37, 'delta' : 0.3, 'omega' : 1.2},
+                  {'alpha' : -1.0, 'beta' : 1.0, 'gamma' : 0.37, 'delta' : 1.0, 'omega' : 1.2}, 
+                  {'alpha' : -1.0, 'beta' : 1.0, 'gamma' : 0.5, 'delta' : 0.3, 'omega' : 1.2},
+                  {'alpha' : -1.0, 'beta' : 1.0, 'gamma' : 0.0, 'delta' : 0.3, 'omega' : 0.0},
+                  {'alpha' : -1.0, 'beta' : -1.0, 'gamma' : 0.37, 'delta' : 0.3, 'omega' : 1.2},
+                  {'alpha' : 0.0, 'beta' : 0.0, 'gamma' : 0.37, 'delta' : 0.3, 'omega' : 1.2}]
 
 """
 Define Parameter Configuration to Model
@@ -415,7 +416,7 @@ for dict_param in parameter_list:
     suffix = duffing.suffix
 
     end_time = 100
-    duffing.generate(100000, samples = 100, end_time = end_time)
+    duffing.generate(1000, samples = 100, end_time = end_time)
     duffing.scale_features()
     X_train, X_test, y_train, y_test = train_test_split(duffing.X_df[duffing.features], duffing.X_df[duffing.labels], test_size=0.1, random_state=42)
     

@@ -39,7 +39,7 @@ class Duffing():
         Class for the Duffing Oscillator
     """
     def __init__(self, parameters = {'alpha': [0.3], 'beta': [-0.1], 'gamma': [0.37], 'delta': [0.3], 'omega': [1.2]}, 
-                 labels = ['xt','vt'], features = ['x0','v0', 't', 'rand'], scaler = None):
+                 labels = ['xt','vt'], features = ['x0','v0', 't', 'energy'], scaler = None):
         """
             Define Parameter Configuration to Model
 
@@ -144,7 +144,7 @@ class Duffing():
             X[val_range_low:val_range_high,:] = np.hstack((x0*np.ones(samples).reshape(-1,1), 
                                            v0*np.ones(samples).reshape(-1,1),
                                            t_vals.reshape(-1,1),
-                                           np.random.uniform(-1,1,samples).reshape(-1,1),
+                                           self.energy(x0, v0)*np.ones(samples).reshape(-1,1),
                                            traj_x.reshape(-1,1), 
                                            traj_v.reshape(-1,1)))
         
@@ -391,12 +391,12 @@ def SimpleModel():
 
 
 
-parameter_list = [{'alpha' : 1.0, 'beta' : 1.0, 'gamma' : 0.37, 'delta' : 0.3, 'omega' : 1.2}, 
-                  {'alpha' : 1.0, 'beta' : -0.5, 'gamma' : 0.37, 'delta' : 0.3, 'omega' : 1.2},
-                  {'alpha' : 1.0, 'beta' : -0.5, 'gamma' : 0.37, 'delta' : 1.0, 'omega' : 1.2}, 
-                  {'alpha' : 1.0, 'beta' : -0.5, 'gamma' : 0.5, 'delta' : 0.3, 'omega' : 1.2},
-                  {'alpha' : 1.0, 'beta' : -0.5, 'gamma' : 0.37, 'delta' : 0.0, 'omega' : 1.2}
-                  ]
+parameter_list = [{'alpha' : -1.0, 'beta' : 1.0, 'gamma' : 0.37, 'delta' : 0.3, 'omega' : 1.2},
+                  {'alpha' : -1.0, 'beta' : 1.0, 'gamma' : 0.37, 'delta' : 1.0, 'omega' : 1.2}, 
+                  {'alpha' : -1.0, 'beta' : 1.0, 'gamma' : 0.5, 'delta' : 0.3, 'omega' : 1.2},
+                  {'alpha' : -1.0, 'beta' : 1.0, 'gamma' : 0.0, 'delta' : 0.3, 'omega' : 0.0},
+                  {'alpha' : -1.0, 'beta' : -1.0, 'gamma' : 0.37, 'delta' : 0.3, 'omega' : 1.2},
+                  {'alpha' : 0.0, 'beta' : 0.0, 'gamma' : 0.37, 'delta' : 0.3, 'omega' : 1.2}]
 
 """
 Define Parameter Configuration to Model

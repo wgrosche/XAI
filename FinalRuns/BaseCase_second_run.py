@@ -33,13 +33,12 @@ rng = np.random.RandomState(42)
 tf.random.set_seed(42)
 np.random.seed(42)
 
-
 class Duffing():
     """
         Class for the Duffing Oscillator
     """
     def __init__(self, parameters = {'alpha': [0.3], 'beta': [-0.1], 'gamma': [0.37], 'delta': [0.3], 'omega': [1.2]}, 
-                 labels = ['xt','vt'], features = ['x0','v0', 't', 'rand'], scaler = None):
+                 labels = ['xt','vt'], features = ['x0','v0', 't'], scaler = None):
         """
             Define Parameter Configuration to Model
 
@@ -52,13 +51,11 @@ class Duffing():
             omega : float, angular frequency of the periodic driving force
         """   
         self.labels = labels
+        self.parameters = parameters
         self.features = features
         self.scaler = scaler
-        self.parameters = parameters
-        self.suffix = "random_feature_params_"+str(parameters['alpha'])+"_"+str(parameters['beta'])+"_"+str(parameters['gamma'])+"_"+str(parameters['delta'])+"_"+str(parameters['omega'])
+        self.suffix = "base_case_params_"+str(parameters['alpha'])+"_"+str(parameters['beta'])+"_"+str(parameters['gamma'])+"_"+str(parameters['delta'])+"_"+str(parameters['omega'])
 
-
-            
         
     def eom(self, t, u):
         """
@@ -133,18 +130,15 @@ class Duffing():
             #Generate random starting positions
             x0 = (x_max - x_min) * np.random.random_sample() + x_min
             v0 = (v_max - v_min) * np.random.random_sample() + v_min
-
+            # Do something with the current parameter combination in ``dict_``
             #Generate a trajectory
             trajectory = solve_ivp(self.eom, [0, end_time], [x0,v0], t_eval = t_vals, events = [self.termination_event])
             traj_cutoff =  samples - len(trajectory.y[0])
             traj_x = np.append(trajectory.y[0].reshape(-1,1), 10.0*np.ones(traj_cutoff).reshape(-1,1))
             traj_v = np.append(trajectory.y[1].reshape(-1,1), 10.0*np.ones(traj_cutoff).reshape(-1,1))
-            val_range_low = i*samples
-            val_range_high = (i+1)*samples
-            X[val_range_low:val_range_high,:] = np.hstack((x0*np.ones(samples).reshape(-1,1), 
+            X[i*samples:(i+1)*samples,:] = np.hstack((x0*np.ones(samples).reshape(-1,1), 
                                            v0*np.ones(samples).reshape(-1,1),
                                            t_vals.reshape(-1,1),
-                                           np.random.uniform(-1,1,samples).reshape(-1,1),
                                            traj_x.reshape(-1,1), 
                                            traj_v.reshape(-1,1)))
         
@@ -176,7 +170,6 @@ class Duffing():
             y[i] = [traj.y[0][-1], traj.y[1][-1]]
             
         return y
-
     def predict_x(self, X):
         return self.predict(X)[:,0]
 
@@ -190,6 +183,7 @@ class Duffing():
         df = df.join(pd.DataFrame(data.values, columns = self.features))
         df.insert(df.shape[1], 'explainer' ,[explainer for _ in range(df.shape[0])])
         return df
+    
     
     
 class NumericExplainer():
@@ -260,6 +254,9 @@ class NumericExplainer():
                 self.__normalised = [self.__normalised, normalised_grads.transpose()]
                         
         return self.__atts#, self.__normalised
+    
+    
+    
     
 class Bootstrapper():
     def __init__(self, model, data, features, labels, suffix, explainer_type, num_straps = 50, back_size = 100):
@@ -391,11 +388,12 @@ def SimpleModel():
 
 
 
-parameter_list = [{'alpha' : 1.0, 'beta' : 1.0, 'gamma' : 0.37, 'delta' : 0.3, 'omega' : 1.2}, 
-                  {'alpha' : 1.0, 'beta' : -0.5, 'gamma' : 0.37, 'delta' : 0.3, 'omega' : 1.2},
-                  {'alpha' : 1.0, 'beta' : -0.5, 'gamma' : 0.37, 'delta' : 1.0, 'omega' : 1.2}, 
-                  {'alpha' : 1.0, 'beta' : -0.5, 'gamma' : 0.5, 'delta' : 0.3, 'omega' : 1.2},
-                  {'alpha' : 1.0, 'beta' : -0.5, 'gamma' : 0.37, 'delta' : 0.0, 'omega' : 1.2}
+parameter_list = [{'alpha' : -1.0, 'beta' : 1.0, 'gamma' : 0.37, 'delta' : 0.3, 'omega' : 1.2},
+                  {'alpha' : -1.0, 'beta' : 1.0, 'gamma' : 0.37, 'delta' : 1.0, 'omega' : 1.2}, 
+                  {'alpha' : -1.0, 'beta' : 1.0, 'gamma' : 0.5, 'delta' : 0.3, 'omega' : 1.2},
+                  {'alpha' : -1.0, 'beta' : 1.0, 'gamma' : 0.0, 'delta' : 0.3, 'omega' : 0.0},
+                  {'alpha' : -1.0, 'beta' : -1.0, 'gamma' : 0.37, 'delta' : 0.3, 'omega' : 1.2},
+                  {'alpha' : 0.0, 'beta' : 0.0, 'gamma' : 0.37, 'delta' : 0.3, 'omega' : 1.2}
                   ]
 
 """
@@ -497,8 +495,7 @@ for dict_param in parameter_list:
                 temp_vals = temp_explainer.feature_att(choice)
             else:
                 print("not a valid explainer type")
-            big_df = big_df.append(duffing.vals_to_df(temp_vals, 
-                                                            choice, explainer = explainer, suffix = suffix))
+            big_df = big_df.append(duffing.vals_to_df(temp_vals, choice, explainer = explainer, suffix = suffix))
 
         
     big_df.to_csv("Results/explainer_dataframe_"+suffix+".csv")  
