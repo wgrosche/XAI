@@ -51,7 +51,7 @@ for Setting in Settings:
                 fh.writelines("#SBATCH --ntasks=1\n")
                 fh.writelines("#SBATCH --ntasks-per-node=1\n")
                 fh.writelines("#SBATCH --cpus-per-task=1\n")
-                fh.writelines("#SBATCH --#SBATCH --output=/data/user/grosche_w/XAI/XAI/FinalRuns/Logs/"+Setting+param_idx+"_out_%j.log\n")
+                fh.writelines("#SBATCH --#SBATCH --output=/data/user/grosche_w/XAI/XAI/FinalRuns/Logs/"+Setting+str(param_idx)+"_out_%j.log\n")
                 fh.writelines("#SBATCH --job-name="+Setting+str(param_idx)+"_run\n")
                 fh.writelines("""NOW=$(date +"%m-%d-%Y")\n""")
                 fh.writelines("""echo "Starting time: $NOW, $NOW2"\n""")
