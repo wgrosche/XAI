@@ -1,3 +1,44 @@
+# import libraries
+import numpy as np
+import pandas as pd
+from tqdm import tqdm
+import pickle
+
+from sklearn.preprocessing import MinMaxScaler
+from sklearn.model_selection import train_test_split
+from sklearn.model_selection import ParameterGrid
+
+from scipy.integrate import odeint, solve_ivp
+from scipy.fft import fft
+
+
+import shap as shap
+try:
+    import lime
+    import lime.lime_tabular    
+except ImportError:
+    pass
+
+# Machine Learning Libraries
+import tensorflow as tf
+from tensorflow.keras.models import Sequential
+from tensorflow.keras import layers
+from tensorflow.keras.optimizers import RMSprop, Adam
+from tensorflow.keras.utils import Sequence
+from tensorflow import keras
+
+# for reproducibility of this notebook:
+rng = np.random.RandomState(42)
+tf.random.set_seed(42)
+np.random.seed(42)
+
+
+import os
+import sys
+
+
+
+
 class NumericExplainer():
     """
         Pretty Brute force numerical gradient calculation for
