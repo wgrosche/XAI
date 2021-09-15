@@ -25,7 +25,7 @@ lizards=["LizardA","LizardB"]
 for Setting in Settings:
     for Model in Models:
         job_file=os.path.join(job_directory, Setting+Model+"s.job")
-        explainer_data = os.path.join(data_dir, Setting+Model)
+        #explainer_data = os.path.join(data_dir, Setting+Model)
         
 
     # Create lizard directories
