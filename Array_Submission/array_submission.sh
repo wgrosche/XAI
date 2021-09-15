@@ -17,7 +17,7 @@ for Setting in ${Settings[@]}; do
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --ntasks-per-node=1
-#SBATCH --cpus-per-task=4
+#SBATCH --cpus-per-task=1
 #SBATCH --mem-per-cpu=16000
 #SBATCH --output=/data/user/grosche_w/XAI/XAI/FinalRuns/Logs/${Setting}_${Params}_out_%j.log
 #SBATCH --job-name=${Setting}_${Params}_run
@@ -34,7 +34,7 @@ conda activate /data/user/grosche_w/myenv
 
 
 
-python3 ${Setting}Feature.py --
+python3 ${Setting}Feature.py
 
 
 END=$(date +%s)
@@ -44,7 +44,7 @@ NOW=$(date +"%m-%d-%Y")
 NOW2=$(date +"%r")
 echo "Ending time: $NOW, $NOW2"
 echo ""
- > $job_file
+        > $job_file
     sbatch $job_file
 
 done
