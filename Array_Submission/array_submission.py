@@ -20,18 +20,18 @@ Settings=["Base", "Random", "Energy","Gamma"]
 Models=["True", "Complex", "Simple"]
 
 
-lizards=["LizardA","LizardB"]
+#lizards=["LizardA","LizardB"]
 
 for Setting in Settings:
     for Model in Models:
-        job_file=os.path.join(job_directory, Setting+Model+"s.job")
+        job_file=os.path.join(job_directory, Setting+Model+".job")
         #explainer_data = os.path.join(data_dir, Setting+Model)
         
 
     # Create lizard directories
     #mkdir_p(explainer_data)
 
-    with open(job_file) as fh:
+    with open(job_file, 'x') as fh:
         fh.writelines("#!/bin/bash\n")
         fh.writelines("#SBATCH --partition=daily\n")
         fh.writelines("#SBATCH --time=23:30:00\n")
