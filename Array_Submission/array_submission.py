@@ -9,12 +9,12 @@ def mkdir_p(dir):
     
 
 job_directory = "%s/.job" %os.getcwd()
-scratch = os.environ['SCRATCH']
-data_dir = os.path.join(scratch, '/project/ExplainabilityArray')
+#scratch = os.environ['SCRATCH']
+#data_dir = os.path.join(scratch, '/project/ExplainabilityArray')
 
 # Make top level directories
 mkdir_p(job_directory)
-mkdir_p(data_dir)
+#mkdir_p(data_dir)
 
 Settings=["Base", "Random", "Energy","Gamma"]
 Models=["True", "Complex", "Simple"]
@@ -29,7 +29,7 @@ for Setting in Settings:
         
 
     # Create lizard directories
-    mkdir_p(explainer_data)
+    #mkdir_p(explainer_data)
 
     with open(job_file) as fh:
         fh.writelines("#!/bin/bash\n")
