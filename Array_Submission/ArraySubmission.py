@@ -71,7 +71,7 @@ parameter_list = [{'alpha' : 1.0, 'beta' : 1.0, 'gamma' : 0.37, 'delta' : 0.3, '
                   {'alpha' : 0.0, 'beta' : 0.0, 'gamma' : 0.37, 'delta' : 0.3, 'omega' : 1.2}]
 
 
-myparam = parameter_list[idx]
+dict_param = parameter_list[idx]
 
 from OtherFunctions import *
 
