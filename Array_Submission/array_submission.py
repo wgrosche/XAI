@@ -61,7 +61,7 @@ for Setting in Settings:
                 fh.writelines("""module use unstable\n""")
                 fh.writelines("""module load anaconda\n""")
                 fh.writelines("""conda activate /data/user/grosche_w/myenv\n""")
-                fh.writelines("python3 "+Setting+"Feature.py "+str(param_idx)+" "+Model+" "+Setting+"\n")
+                fh.writelines("python3 ArraySubmission.py "+str(param_idx)+" "+Model+" "+Setting+"\n")
                 fh.writelines("""END=$(date +%s)\n""")
                 fh.writelines("""DIFF=$(( $END - $START ))\n""")
                 fh.writelines("""echo "It took $DIFF seconds"\n""")
