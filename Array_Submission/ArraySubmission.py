@@ -42,7 +42,7 @@ import sys
 #feature_setting = str(os.environ["Setting"])
 
 #model_setting = str(os.environ["Model"])
-idx = sys.argv[1]
+idx = int(sys.argv[1])
 model_setting = sys.argv[2]
 feature_setting = sys.argv[3]
 
