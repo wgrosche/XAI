@@ -83,8 +83,7 @@ elif feature_setting == "Energy":
     from  EnergyDuffing import Duffing
 elif feature_setting == "Gamma":
     from  GammaDuffing import Duffing
-else:
-    break
+
 
     
 
