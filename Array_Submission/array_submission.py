@@ -42,7 +42,7 @@ for Setting in Settings:
             # Create lizard directories
             #mkdir_p(explainer_data)
 
-            with open(job_file, 'x') as fh:
+            with open(job_file, 'w') as fh:
                 fh.writelines("#!/bin/bash\n")
                 fh.writelines("#SBATCH --partition=daily\n")
                 fh.writelines("#SBATCH --time=23:30:00\n")
