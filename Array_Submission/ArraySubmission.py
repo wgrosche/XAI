@@ -34,11 +34,18 @@ np.random.seed(42)
 
 
 import os
-idx = int(os.environ["SLURM_ARRAY_TASK_ID"])
+import sys
 
-feature_setting = str(os.environ["Setting"])
 
-model_setting = str(os.environ["Model"])
+#idx = int(os.environ["SLURM_ARRAY_TASK_ID"])
+
+#feature_setting = str(os.environ["Setting"])
+
+#model_setting = str(os.environ["Model"])
+idx = sys.argv[1]
+model_setting = sys.argv[2]
+feature_setting = sys.argv[3]
+
 """
 Define Parameter Configuration to Model
 
@@ -51,14 +58,17 @@ Define Parameter Configuration to Model
     omega : float, angular frequency of the periodic driving force
 """   
 
-
-
-
 parameter_list = [{'alpha' : 1.0, 'beta' : 1.0, 'gamma' : 0.37, 'delta' : 0.3, 'omega' : 1.2}, 
                   {'alpha' : 1.0, 'beta' : -0.5, 'gamma' : 0.37, 'delta' : 0.3, 'omega' : 1.2},
                   {'alpha' : 1.0, 'beta' : -0.5, 'gamma' : 0.37, 'delta' : 1.0, 'omega' : 1.2}, 
                   {'alpha' : 1.0, 'beta' : -0.5, 'gamma' : 0.5, 'delta' : 0.3, 'omega' : 1.2},
-                  {'alpha' : 1.0, 'beta' : -0.5, 'gamma' : 0.37, 'delta' : 0.0, 'omega' : 1.2}]
+                  {'alpha' : 1.0, 'beta' : -0.5, 'gamma' : 0.37, 'delta' : 0.0, 'omega' : 1.2},
+                  {'alpha' : -1.0, 'beta' : 1.0, 'gamma' : 0.37, 'delta' : 0.3, 'omega' : 1.2},
+                  {'alpha' : -1.0, 'beta' : 1.0, 'gamma' : 0.37, 'delta' : 1.0, 'omega' : 1.2}, 
+                  {'alpha' : -1.0, 'beta' : 1.0, 'gamma' : 0.5, 'delta' : 0.3, 'omega' : 1.2},
+                  {'alpha' : -1.0, 'beta' : 1.0, 'gamma' : 0.0, 'delta' : 0.3, 'omega' : 0.0},
+                  {'alpha' : -1.0, 'beta' : -1.0, 'gamma' : 0.37, 'delta' : 0.3, 'omega' : 1.2},
+                  {'alpha' : 0.0, 'beta' : 0.0, 'gamma' : 0.37, 'delta' : 0.3, 'omega' : 1.2}]
 
 
 myparam = parameter_list[idx]
