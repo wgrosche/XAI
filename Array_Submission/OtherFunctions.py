@@ -56,7 +56,7 @@ class NumericExplainer():
                 differentiate f.
             labels : list of features in the np.array.
         """
-        self.f = f
+        self.f = f.predict
         self.features = features
         self.labels = labels
         self.h = h
