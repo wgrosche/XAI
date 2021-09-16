@@ -142,7 +142,7 @@ if __name__ == '__main__':
 
     big_df = pd.DataFrame()
     for explainer in explainers:
-        print(explainer + model_)
+        print(explainer)
         if explainer == "kernel":
             temp_explainer = shap.KernelExplainer(models[model_], background)
             temp_vals = temp_explainer.shap_values(choice)
