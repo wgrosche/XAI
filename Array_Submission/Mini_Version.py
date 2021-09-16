@@ -144,16 +144,16 @@ if __name__ == '__main__':
     for explainer in explainers:
         print(explainer)
         if explainer == "kernel":
-            temp_explainer = shap.KernelExplainer(models[model_], background)
+            temp_explainer = shap.KernelExplainer(model, background)
             temp_vals = temp_explainer.shap_values(choice)
         elif explainer == "sampling":
-            temp_explainer = shap.SamplingExplainer(models[model_], background)
+            temp_explainer = shap.SamplingExplainer(model, background)
             temp_vals = temp_explainer.shap_values(choice)
         elif explainer == "lime":
-            temp_explainer = MyLime(lime_models[model_], choice, mode='regression')
+            temp_explainer = MyLime(lime_models, choice, mode='regression')
             temp_vals = temp_explainer.attributions(choice)
         elif explainer == "numeric":
-            temp_explainer = NumericExplainer(models[model_], duffing.features, duffing.labels, h = 0.001)
+            temp_explainer = NumericExplainer(model, duffing.features, duffing.labels, h = 0.001)
             temp_vals = temp_explainer.feature_att(choice)
         else:
             print("not a valid explainer type")
