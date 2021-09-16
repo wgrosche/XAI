@@ -136,8 +136,8 @@ if __name__ == '__main__':
     explainers = ["kernel", "sampling", "lime", "numeric"]
     lime_models = [lime_x, lime_v]
 
-    background = shap.sample(X_test, 1)
-    choice = X.iloc[np.sort(np.random.choice(X_test.shape[0], 1, replace =False))]
+    background = shap.sample(X_test, 3)
+    choice = X.iloc[np.sort(np.random.choice(X_test.shape[0], 3, replace =False))]
 
 
     big_df = pd.DataFrame()
