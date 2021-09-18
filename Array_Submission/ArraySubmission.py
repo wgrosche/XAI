@@ -79,6 +79,7 @@ if feature_setting == "Base":
     num_samples_ml = 100000
     from  BaseDuffing import Duffing
 elif feature_setting == "Random":
+    num_samples_ml = 100000
     from  RandomDuffing import Duffing
 elif feature_setting == "Energy":
     num_samples_ml = 100000
