@@ -59,7 +59,7 @@ class Duffing():
         self.features = features
         self.scaler = scaler
         self.parameters = parameters
-        self.suffix = "random_feature_params_"+str(parameters['alpha'])+"_"+str(parameters['beta'])+"_"+str(parameters['gamma'])+"_"+str(parameters['delta'])+"_"+str(parameters['omega'])
+        self.suffix = "_"+str(parameters['alpha'])+"_"+str(parameters['beta'])+"_"+str(parameters['gamma'])+"_"+str(parameters['delta'])+"_"+str(parameters['omega'])
 
 
             

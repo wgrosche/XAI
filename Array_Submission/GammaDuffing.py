@@ -58,7 +58,7 @@ class Duffing():
         self.features = features
         self.scaler = scaler
         self.parameters = parameters
-        self.suffix = "gamma_feature_params_"+str(parameters['alpha'])+"_"+str(parameters['beta'])+"_"+str(parameters['delta'])+"_"+str(parameters['omega'])
+        self.suffix = "_"+str(parameters['alpha'])+"_"+str(parameters['beta'])+"_"+str(parameters['delta'])+"_"+str(parameters['omega'])
           
         
     def eom(self, t, u):

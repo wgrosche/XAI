@@ -34,7 +34,7 @@ Params = [{'alpha' : 1.0, 'beta' : 1.0, 'gamma' : 0.37, 'delta' : 0.3, 'omega' :
 
 for Setting in Settings:
     for Model in Models:
-        for param_idx, Param in enumerate(Params[1:]):
+        for param_idx, Param in enumerate(Params):
             job_file=os.path.join(job_directory, Setting+Model+".job")
             #explainer_data = os.path.join(data_dir, Setting+Model)
 

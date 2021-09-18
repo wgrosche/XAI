@@ -76,12 +76,15 @@ dict_param = parameter_list[idx]
 from OtherFunctions import *
 
 if feature_setting == "Base":
+    num_samples_ml = 100000
     from  BaseDuffing import Duffing
 elif feature_setting == "Random":
     from  RandomDuffing import Duffing
 elif feature_setting == "Energy":
+    num_samples_ml = 100000
     from  EnergyDuffing import Duffing
 elif feature_setting == "Gamma":
+    num_samples_ml = 1000
     from  GammaDuffing import Duffing
 
 
@@ -94,7 +97,7 @@ if __name__ == '__main__':
     suffix = feature_setting + "_" + model_setting + "_" + duffing.suffix
 
     end_time = 100
-    duffing.generate(100000, samples = 100, end_time = end_time)
+    duffing.generate(num_samples_ml, samples = 100, end_time = end_time)
     duffing.scale_features()
     X_train, X_test, y_train, y_test = train_test_split(duffing.X_df[duffing.features], 
                                                         duffing.X_df[duffing.labels], test_size=0.1, random_state=42)
@@ -108,7 +111,7 @@ if __name__ == '__main__':
     elif model_setting == "Simple":
         model = SimpleModel()
     elif model_setting == "True":
-        model = duffing
+        model = duffing.predict
         
     
     if (model_setting == "Simple") or (model_setting == "Complex"):
