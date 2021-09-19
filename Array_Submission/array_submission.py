@@ -16,7 +16,7 @@ job_directory = "%s/.job" %os.getcwd()
 mkdir_p(job_directory)
 #mkdir_p(data_dir)
 
-Settings=['Random']#["Base", "Random", "Energy","Gamma"]
+Settings=["Base", "Random", "Energy","Gamma"]
 Models=["True", "Complex", "Simple"]
 Params = [{'alpha' : 1.0, 'beta' : 1.0, 'gamma' : 0.37, 'delta' : 0.3, 'omega' : 1.2}, 
           {'alpha' : 1.0, 'beta' : -0.5, 'gamma' : 0.37, 'delta' : 0.3, 'omega' : 1.2},
