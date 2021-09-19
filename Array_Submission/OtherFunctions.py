@@ -232,7 +232,7 @@ def SimpleModel():
     loss='mse'
     model = Sequential([
         layers.Flatten(),
-        layers.Dense(200, activation='relu'),
+        layers.Dense(64, activation='relu'),
         layers.Dense(32, activation='relu'),
         layers.Dense(2)            
     ])

@@ -112,7 +112,7 @@ if __name__ == '__main__':
     elif model_setting == "Simple":
         model = SimpleModel()
     elif model_setting == "True":
-        model = duffing.predict
+        model = duffing
         
     
     if (model_setting == "Simple") or (model_setting == "Complex"):
@@ -157,7 +157,7 @@ if __name__ == '__main__':
             temp_explainer = MyLime(lime_models, choice, mode='regression')
             temp_vals = temp_explainer.attributions(choice)
         elif explainer == "numeric":
-            temp_explainer = NumericExplainer(model, duffing.features, duffing.labels, h = 0.001)
+            temp_explainer = NumericExplainer(model.predict, duffing.features, duffing.labels, h = 0.001)
             temp_vals = temp_explainer.feature_att(choice)
         else:
             print("not a valid explainer type")
