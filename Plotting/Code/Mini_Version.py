@@ -76,16 +76,12 @@ dict_param = parameter_list[idx]
 from OtherFunctions import *
 
 if feature_setting == "Base":
-    num_samples_ml = 100000
     from  BaseDuffing import Duffing
 elif feature_setting == "Random":
-    num_samples_ml = 100000
     from  RandomDuffing import Duffing
 elif feature_setting == "Energy":
-    num_samples_ml = 100000
     from  EnergyDuffing import Duffing
 elif feature_setting == "Gamma":
-    num_samples_ml = 1000
     from  GammaDuffing import Duffing
 
 
@@ -98,7 +94,7 @@ if __name__ == '__main__':
     suffix = feature_setting + "_" + model_setting + "_" + duffing.suffix
 
     end_time = 100
-    duffing.generate(num_samples_ml, samples = 100, end_time = end_time)
+    duffing.generate(10, samples = 10, end_time = end_time)
     duffing.scale_features()
     X_train, X_test, y_train, y_test = train_test_split(duffing.X_df[duffing.features], 
                                                         duffing.X_df[duffing.labels], test_size=0.1, random_state=42)
@@ -112,18 +108,18 @@ if __name__ == '__main__':
     elif model_setting == "Simple":
         model = SimpleModel()
     elif model_setting == "True":
-        model = duffing.predict
+        model = duffing
         
     
     if (model_setting == "Simple") or (model_setting == "Complex"):
         """
         Train Model
         """
-        callbacks = [tf.keras.callbacks.EarlyStopping(monitor='val_loss',patience=250),
-                     tf.keras.callbacks.EarlyStopping(monitor='loss', patience=150)]
+        callbacks = [tf.keras.callbacks.EarlyStopping(monitor='val_loss',patience=25),
+                     tf.keras.callbacks.EarlyStopping(monitor='loss', patience=15)]
 
 
-        history=model.fit(X_train, y_train, steps_per_epoch=None, epochs=500, validation_split=0.2, 
+        history=model.fit(X_train, y_train, steps_per_epoch=None, epochs=5, validation_split=0.2, 
                           batch_size=1024, shuffle=True, callbacks=callbacks, verbose=0)
 
 
@@ -140,8 +136,8 @@ if __name__ == '__main__':
     explainers = ["kernel", "sampling", "lime", "numeric"]
     lime_models = [lime_x, lime_v]
 
-    background = shap.sample(X_test, 100)
-    choice = X.iloc[np.sort(np.random.choice(X_test.shape[0], 100, replace =False))]
+    background = shap.sample(X_test, 3)
+    choice = X.iloc[np.sort(np.random.choice(X_test.shape[0], 3, replace =False))]
 
 
     big_df = pd.DataFrame()
@@ -164,5 +160,5 @@ if __name__ == '__main__':
         big_df = big_df.append(duffing.vals_to_df(temp_vals, choice, explainer = explainer, suffix = suffix))
 
 
-    big_df.to_csv("Results/explainer_dataframe_"+suffix+".csv")  
+ 
 

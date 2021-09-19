@@ -79,7 +79,6 @@ if feature_setting == "Base":
     num_samples_ml = 100000
     from  BaseDuffing import Duffing
 elif feature_setting == "Random":
-    num_samples_ml = 100000
     from  RandomDuffing import Duffing
 elif feature_setting == "Energy":
     num_samples_ml = 100000
@@ -119,8 +118,8 @@ if __name__ == '__main__':
         """
         Train Model
         """
-        callbacks = [tf.keras.callbacks.EarlyStopping(monitor='val_loss',patience=250),
-                     tf.keras.callbacks.EarlyStopping(monitor='loss', patience=150)]
+        callbacks = [tf.keras.callbacks.EarlyStopping(monitor='val_loss',patience=25),
+                     tf.keras.callbacks.EarlyStopping(monitor='loss', patience=15)]
 
 
         history=model.fit(X_train, y_train, steps_per_epoch=None, epochs=500, validation_split=0.2, 
@@ -141,7 +140,7 @@ if __name__ == '__main__':
     lime_models = [lime_x, lime_v]
 
     background = shap.sample(X_test, 100)
-    choice = X.iloc[np.sort(np.random.choice(X_test.shape[0], 100, replace =False))]
+    choice = X.iloc[np.sort(np.random.choice(X_test.shape[0], 50, replace =False))]
 
 
     big_df = pd.DataFrame()
