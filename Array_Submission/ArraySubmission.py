@@ -109,10 +109,13 @@ if __name__ == '__main__':
     # Create a basic model instance
     if model_setting == "Complex":
         model = MLModel()
+        model_ = MLModel()
     elif model_setting == "Simple":
         model = SimpleModel()
+        model_ = SimpleModel()
     elif model_setting == "True":
         model = duffing
+        model_ = duffing.predict
         
     
     if (model_setting == "Simple") or (model_setting == "Complex"):
@@ -132,8 +135,12 @@ if __name__ == '__main__':
             pickle.dump(history.history, file_pi)
     
     def lime_x(X):
+        if model_setting == "True":
+            model = duffing
         return model.predict(X)[:,0]
     def lime_v(X):
+        if model_setting == "True":
+            model = duffing
         return model.predict(X)[:,1]
     
 
@@ -146,18 +153,17 @@ if __name__ == '__main__':
 
     big_df = pd.DataFrame()
     for explainer in explainers:
-        print(explainer)
         if explainer == "kernel":
-            temp_explainer = shap.KernelExplainer(model, background)
+            temp_explainer = shap.KernelExplainer(model_, background)
             temp_vals = temp_explainer.shap_values(choice)
         elif explainer == "sampling":
-            temp_explainer = shap.SamplingExplainer(model, background)
+            temp_explainer = shap.SamplingExplainer(model_, background)
             temp_vals = temp_explainer.shap_values(choice)
         elif explainer == "lime":
             temp_explainer = MyLime(lime_models, choice, mode='regression')
             temp_vals = temp_explainer.attributions(choice)
         elif explainer == "numeric":
-            temp_explainer = NumericExplainer(model.predict, duffing.features, duffing.labels, h = 0.001)
+            temp_explainer = NumericExplainer(model, duffing.features, duffing.labels, h = 0.001)
             temp_vals = temp_explainer.feature_att(choice)
         else:
             print("not a valid explainer type")
