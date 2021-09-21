@@ -135,20 +135,16 @@ if __name__ == '__main__':
             pickle.dump(history.history, file_pi)
     
     def lime_x(X):
-        if model_setting == "True":
-            model = duffing
-        return model.predict(X)[:,0]
+        return model_.predict(X)[:,0]
     def lime_v(X):
-        if model_setting == "True":
-            model = duffing
-        return model.predict(X)[:,1]
+        return model_.predict(X)[:,1]
     
 
     explainers = ["kernel", "sampling", "lime", "numeric"]
     lime_models = [lime_x, lime_v]
 
     background = shap.sample(X_test, 100)
-    choice = X.iloc[np.sort(np.random.choice(X_test.shape[0], 100, replace =False))]
+    choice = X_test.iloc[np.sort(np.random.choice(X_test.shape[0], 100, replace =False))]
 
 
     big_df = pd.DataFrame()
@@ -160,7 +156,7 @@ if __name__ == '__main__':
             temp_explainer = shap.SamplingExplainer(model_, background)
             temp_vals = temp_explainer.shap_values(choice)
         elif explainer == "lime":
-            temp_explainer = MyLime(lime_models, choice, mode='regression')
+            temp_explainer = MyLime(lime_models, X_test, mode='regression')
             temp_vals = temp_explainer.attributions(choice)
         elif explainer == "numeric":
             temp_explainer = NumericExplainer(model, duffing.features, duffing.labels, h = 0.001)
