@@ -135,9 +135,9 @@ if __name__ == '__main__':
             pickle.dump(history.history, file_pi)
     
     def lime_x(X):
-        return model_.predict(X)[:,0]
+        return model.predict(X)[:,0]
     def lime_v(X):
-        return model_.predict(X)[:,1]
+        return model.predict(X)[:,1]
     
 
     explainers = ["kernel", "sampling", "lime", "numeric"]
