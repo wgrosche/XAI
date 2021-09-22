@@ -122,8 +122,8 @@ if __name__ == '__main__':
         """
         Train Model
         """
-        callbacks = [tf.keras.callbacks.EarlyStopping(monitor='val_loss',patience=15),
-                     tf.keras.callbacks.EarlyStopping(monitor='loss', patience=50)]
+        callbacks = [tf.keras.callbacks.EarlyStopping(monitor='val_loss',patience=250),
+                     tf.keras.callbacks.EarlyStopping(monitor='loss', patience=150)]
 
 
         history=model.fit(X_train, y_train, steps_per_epoch=None, epochs=500, validation_split=0.2, 

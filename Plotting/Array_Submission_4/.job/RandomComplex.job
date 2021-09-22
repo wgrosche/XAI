@@ -1,0 +1,26 @@
+#!/bin/bash
+#SBATCH --partition=daily
+#SBATCH --time=23:30:00
+#SBATCH --clusters=merlin6
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --ntasks-per-node=1
+#SBATCH --cpus-per-task=1
+#SBATCH --output=/data/user/grosche_w/XAI/XAI/Array_Submission/Logs/Random_Complex_10_out_%j.log
+#SBATCH --job-name=Random_10_run
+NOW=$(date +"%m-%d-%Y")
+NOW2=$(date +"%r")
+echo "Starting time: $NOW, $NOW2"
+echo ""
+START=$(date +%s)
+module use unstable
+module load anaconda
+conda activate /data/user/grosche_w/myenv
+python3 ArraySubmission.py 10 Complex Random
+END=$(date +%s)
+DIFF=$(( $END - $START ))
+echo "It took $DIFF seconds"
+NOW=$(date +"%m-%d-%Y")
+NOW2=$(date +"%r")
+echo "Ending time: $NOW, $NOW2"
+echo "" 
