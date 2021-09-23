@@ -122,7 +122,7 @@ if __name__ == '__main__':
         """
         Train Model
         """
-        callbacks = [tf.keras.callbacks.EarlyStopping(monitor='val_loss',patience=15),
+        callbacks = [tf.keras.callbacks.EarlyStopping(monitor='val_loss',patience=3),
                      tf.keras.callbacks.EarlyStopping(monitor='loss', patience=50)]
 
 

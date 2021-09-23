@@ -90,7 +90,7 @@ class Duffing():
         """
             Stops Numerical Integration once points wander too far away
         """
-        return (np.abs(y[0]) - 10)*(np.abs(y[1]) - 10)
+        return (np.abs(y[0]) - 30)*(np.abs(y[1]) - 30)
     termination_event.terminal = True
 
 
