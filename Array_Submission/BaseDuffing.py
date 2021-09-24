@@ -138,8 +138,8 @@ class Duffing():
             #Generate a trajectory
             trajectory = solve_ivp(self.eom, [0, end_time], [x0,v0], t_eval = t_vals, events = [self.termination_event])
             traj_cutoff =  samples - len(trajectory.y[0])
-            traj_x = np.append(trajectory.y[0].reshape(-1,1), 10.0*np.ones(traj_cutoff).reshape(-1,1))
-            traj_v = np.append(trajectory.y[1].reshape(-1,1), 10.0*np.ones(traj_cutoff).reshape(-1,1))
+            traj_x = np.append(trajectory.y[0].reshape(-1,1), trajectory.y[0][-1]*np.ones(traj_cutoff).reshape(-1,1))
+            traj_v = np.append(trajectory.y[1].reshape(-1,1), trajectory.y[1][-1]*np.ones(traj_cutoff).reshape(-1,1))
             X[i*samples:(i+1)*samples,:] = np.hstack((x0*np.ones(samples).reshape(-1,1), 
                                            v0*np.ones(samples).reshape(-1,1),
                                            t_vals.reshape(-1,1),
