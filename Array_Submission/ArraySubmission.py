@@ -104,8 +104,8 @@ if __name__ == '__main__':
     eom = duffing.eom
     suffix = feature_setting + "_" + model_setting + "_" + duffing.suffix
 
-    end_time = 100
-    duffing.generate(num_samples_ml, samples = 100, end_time = end_time)
+    end_time = 20 #prev 100
+    duffing.generate(num_samples_ml, samples = 100, end_time = end_time) #samples prev 100
     duffing.scale_features()
     X_train, X_test, y_train, y_test = train_test_split(duffing.X_df[duffing.features], 
                                                         duffing.X_df[duffing.labels], test_size=0.1, random_state=42)
@@ -116,13 +116,10 @@ if __name__ == '__main__':
     # Create a basic model instance
     if model_setting == "Complex":
         model = MLModel()
-        model_ = MLModel()
     elif model_setting == "Simple":
         model = SimpleModel()
-        model_ = SimpleModel()
     elif model_setting == "True":
         model = duffing
-        model_ = duffing.predict
         
     
     if (model_setting == "Simple") or (model_setting == "Complex"):
@@ -140,6 +137,13 @@ if __name__ == '__main__':
         model.save('Models/Model'+suffix)
         with open('Models/TrainingHistory/'+suffix, 'wb') as file_pi:
             pickle.dump(history.history, file_pi)
+            
+    if model_setting == "Complex":
+        model_ = model
+    elif model_setting == "Simple":
+        model_ = model
+    elif model_setting == "True":
+        model_ = duffing.predict
     
     def lime_x(X):
         return model.predict(X)[:,0]
@@ -147,13 +151,13 @@ if __name__ == '__main__':
         return model.predict(X)[:,1]
     
 
-    explainers = ['lime']#["kernel", "sampling", "lime", "numeric"]
+    explainers = ["kernel", "sampling", "lime", "numeric"]
     lime_models = [lime_x, lime_v]
 
     background = shap.sample(X_test, 100)
     choice = X_test.iloc[np.sort(np.random.choice(X_test.shape[0], 100, replace =False))]
 
-
+    
     big_df = pd.DataFrame()
     for explainer in explainers:
         if explainer == "kernel":
@@ -173,5 +177,5 @@ if __name__ == '__main__':
         big_df = big_df.append(duffing.vals_to_df(temp_vals, choice, explainer = explainer, suffix = suffix))
 
 
-    big_df.to_csv("Results/lime_only_explainer_dataframe_"+suffix+".csv")  
+    big_df.to_csv("Results/explainer_dataframe_"+suffix+".csv")  
 
