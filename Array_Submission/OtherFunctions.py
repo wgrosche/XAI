@@ -177,7 +177,7 @@ class MyLime(shap.other.LimeTabular):
         self.explainer = lime.lime_tabular.LimeTabularExplainer(data, mode=mode)
         self.out_dim = 1#self.model(data[0:1]).shape[1]
             
-    def attributions(self, X, num_samples=500, num_features=None):
+    def attributions(self, X, num_samples=5000, num_features=None):
         try:
             num_features = X.shape[1] if num_features is None else num_features
         except:

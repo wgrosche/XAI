@@ -147,7 +147,7 @@ if __name__ == '__main__':
         return model.predict(X)[:,1]
     
 
-    explainers = ["kernel", "sampling", "lime", "numeric"]
+    explainers = ['lime']#["kernel", "sampling", "lime", "numeric"]
     lime_models = [lime_x, lime_v]
 
     background = shap.sample(X_test, 100)
@@ -173,5 +173,5 @@ if __name__ == '__main__':
         big_df = big_df.append(duffing.vals_to_df(temp_vals, choice, explainer = explainer, suffix = suffix))
 
 
-    big_df.to_csv("Results/explainer_dataframe_"+suffix+".csv")  
+    big_df.to_csv("Results/lime_only_explainer_dataframe_"+suffix+".csv")  
 
