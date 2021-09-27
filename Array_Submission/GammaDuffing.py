@@ -174,7 +174,8 @@ class Duffing():
             X_temp = pd.DataFrame(self.scaler.inverse_transform(X), columns=self.features)
         y = np.ones((np.shape(X_temp)[0], 2))
         for i in range(X_temp.shape[0]):
-            self.parameters["gamma"] = X_temp[i:i,:]['gamma']
+            print(X_temp.shape)
+            self.parameters["gamma"] = X_temp['gamma'].loc[i]
             traj = solve_ivp(self.eom, [0, X_temp['t'].iloc[i]], [X_temp['x0'].iloc[i], X_temp['v0'].iloc[i]], 
                             t_eval = None, events = [self.termination_event])
             y[i] = [traj.y[0][-1], traj.y[1][-1]]
