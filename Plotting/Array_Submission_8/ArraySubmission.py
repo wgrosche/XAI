@@ -104,7 +104,7 @@ if __name__ == '__main__':
     eom = duffing.eom
     suffix = feature_setting + "_" + model_setting + "_" + duffing.suffix
 
-    end_time = 100
+    end_time = 20 #prev 100
     duffing.generate(num_samples_ml, samples = 100, end_time = end_time) #samples prev 100
     duffing.scale_features()
     X_train, X_test, y_train, y_test = train_test_split(duffing.X_df[duffing.features], 
