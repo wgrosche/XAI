@@ -170,15 +170,14 @@ class Duffing():
             X_temp = pd.DataFrame(self.scaler.inverse_transform(X.values), columns=X.columns)
         elif type(X) == pd.core.series.Series:
             X_temp = pd.DataFrame(self.scaler.inverse_transform(X.values.reshape(1,-1)), columns=X.index)
-        elif type(X) == np.ndarray:
+        else:
             X_temp = pd.DataFrame(self.scaler.inverse_transform(X), columns=self.features)
-        self.parameters["gamma"] = X['gamma']
         y = np.ones((np.shape(X_temp)[0], 2))
-        for i in range(0,np.shape(X_temp)[0]):
+        for i in range(X_temp.shape[0]):
+            self.parameters["gamma"] = X_temp[i:i,:]['gamma']
             traj = solve_ivp(self.eom, [0, X_temp['t'].iloc[i]], [X_temp['x0'].iloc[i], X_temp['v0'].iloc[i]], 
                             t_eval = None, events = [self.termination_event])
             y[i] = [traj.y[0][-1], traj.y[1][-1]]
-            
         return y
 
     def predict_x(self, X):
