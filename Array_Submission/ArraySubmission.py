@@ -81,7 +81,7 @@ parameter_list = [{'alpha' : -1.0, 'beta' : 1.0, 'gamma' : 0.37, 'delta' : 0.3, 
 dict_param = parameter_list[idx]
 
 from OtherFunctions import *
-
+"""
 if feature_setting == "Base":
     num_samples_ml = 100000
     from  BaseDuffing import Duffing
@@ -94,8 +94,19 @@ elif feature_setting == "Energy":
 elif feature_setting == "Gamma":
     num_samples_ml = 1000
     from  GammaDuffing import Duffing
-
-
+"""
+if feature_setting == "Base":
+    num_samples_ml = 100
+    from  BaseDuffing import Duffing
+elif feature_setting == "Random":
+    num_samples_ml = 100
+    from  RandomDuffing import Duffing
+elif feature_setting == "Energy":
+    num_samples_ml = 100
+    from  EnergyDuffing import Duffing
+elif feature_setting == "Gamma":
+    num_samples_ml = 10
+    from  GammaDuffing import Duffing
     
 
 
@@ -112,7 +123,7 @@ if __name__ == '__main__':
     
     X = X_test
     y = y_test
-    
+"""    
     # Create a basic model instance
     if model_setting == "Complex":
         model = MLModel()
@@ -127,7 +138,7 @@ if __name__ == '__main__':
         Train Model
         """
         callbacks = [tf.keras.callbacks.EarlyStopping(monitor='val_loss',patience=3),
-                     tf.keras.callbacks.EarlyStopping(monitor='loss', patience=50)]
+                     tf.keras.callbacks.EarlyStopping(monitor='loss', patience=3)]
 
 
         history=model.fit(X_train, y_train, steps_per_epoch=None, epochs=500, validation_split=0.2, 
@@ -138,11 +149,22 @@ if __name__ == '__main__':
         with open('Models/TrainingHistory/'+suffix, 'wb') as file_pi:
             pickle.dump(history.history, file_pi)
             
+            
     if model_setting == "Complex":
         model_ = model
     elif model_setting == "Simple":
         model_ = model
     elif model_setting == "True":
+        model_ = duffing.predict
+"""
+    if model_setting == "Complex":
+        model = tf.keras.models.load_model("Models/Model"+suffix)
+        model_ = model
+    elif model_setting == "Simple":
+        model = tf.keras.models.load_model("Models/Model"+suffix)
+        model_ = model
+    elif model_setting == "True":
+        model = duffing
         model_ = duffing.predict
     
     def lime_x(X):
@@ -151,7 +173,7 @@ if __name__ == '__main__':
         return model.predict(X)[:,1]
     
 
-    explainers = ["kernel", "sampling", "lime", "numeric"]
+    explainers = ["lime"]#["kernel", "sampling", "lime", "numeric"]
     lime_models = [lime_x, lime_v]
 
     background = shap.sample(X_test, 100)
@@ -167,7 +189,7 @@ if __name__ == '__main__':
             temp_explainer = shap.SamplingExplainer(model_, background)
             temp_vals = temp_explainer.shap_values(choice)
         elif explainer == "lime":
-            temp_explainer = MyLime(lime_models, X_test, mode='regression')
+            temp_explainer = MyLime(lime_models, X_test, mode='regression', discretize_continuous = False)
             temp_vals = temp_explainer.attributions(choice)
         elif explainer == "numeric":
             temp_explainer = NumericExplainer(model, duffing.features, duffing.labels, h = 0.001)
@@ -177,5 +199,5 @@ if __name__ == '__main__':
         big_df = big_df.append(duffing.vals_to_df(temp_vals, choice, explainer = explainer, suffix = suffix))
 
 
-    big_df.to_csv("Results/explainer_dataframe_"+suffix+".csv")  
+    big_df.to_csv("Results/discretised_explainer_dataframe_"+suffix+".csv")  
 
