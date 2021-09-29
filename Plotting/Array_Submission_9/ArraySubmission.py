@@ -173,7 +173,7 @@ if __name__ == '__main__':
         return model.predict(X)[:,1]
     
 
-    explainers = ["kernel", "sampling", "lime", "numeric"]
+    explainers = ["lime"]#["kernel", "sampling", "lime", "numeric"]
     lime_models = [lime_x, lime_v]
 
     background = shap.sample(X_test, 100)
