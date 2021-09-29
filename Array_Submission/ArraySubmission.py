@@ -135,7 +135,7 @@ if __name__ == '__main__':
     
     if (model_setting == "Simple") or (model_setting == "Complex"):
         """
-        Train Model
+        #Train Model
         """
         callbacks = [tf.keras.callbacks.EarlyStopping(monitor='val_loss',patience=3),
                      tf.keras.callbacks.EarlyStopping(monitor='loss', patience=3)]
