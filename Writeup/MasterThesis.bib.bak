@@ -49,7 +49,7 @@
 @Article{Konno2021,
   author    = {Konno, Tomohiko and Kurokawa, Hodaka and Nabeshima, Fuyuki and Sakishita, Yuki and Ogawa, Ryo and Hosako, Iwao and Maeda, Atsutaka},
   journal   = {Phys. Rev. B},
-  title     = {Deep learning model for finding new superconductors},
+  title     = {Deep Learning Model for Finding New Superconductors},
   year      = {2021},
   month     = {Jan},
   pages     = {014509},
@@ -101,10 +101,11 @@
 }
 
 @Misc{2021,
-  howpublished = {\url{https://en.wikipedia.org/wiki/Duffing_equation}},
-  month        = oct,
-  title        = {Wikipedia: Duffing equation},
-  year         = {2021},
+  month     = oct,
+  title     = {Wikipedia: Duffing equation},
+  timestamp = {2021-10-10},
+  url       = {\url{https://en.wikipedia.org/wiki/Duffing_equation}},
+  urldate   = {10/10/2021},
 }
 
 @Misc{Dobrushkin,
@@ -159,8 +160,8 @@
 }
 
 @Book{ThomasAltmann2019,
-  author    = {Thomas Altmann, et al.},
-  editor    = {Christoph Molnar, et al.},
+  author    = {Altmann, Thomas and Bodensteiner, Jakob and Dankers, Cord and Dassen, Thommy and Fritz, Nikolas and Gruber, Sebastian and Kopper, Philipp and Kronseder, Veronika and Wagner, Moritz and Renkl, Emanuel},
+  editor    = {Molnar, Christoph and Casalicchio, Giuseppe and K\"{o}nig, Gunnar and Pfisterer, Florian and Scholbeck, Christian and Bischl, Bernd},
   publisher = {bookdown},
   title     = {Limitations of Interpretable Machine Learning Methods},
   year      = {2019},
@@ -169,7 +170,7 @@
 @Book{Duffing1918,
   author    = {Georg Duffing},
   publisher = {Braunschweig, F. Vieweg \& Sohn},
-  title     = {Erzwungene Schwingungen bei Veränderlicher Eigenfrequenz und ihre Technische Bedeutung.},
+  title     = {Erzwungene Schwingungen bei veränderlicher Eigenfrequenz und ihre technische Bedeutung.},
   year      = {1918},
 }
 
@@ -183,7 +184,7 @@
 @MastersThesis{Bellotti2020,
   author = {Renato Bellotti},
   school = {ETH Zurich},
-  title  = {Accelerating accelerators: Fast surrogate models for beam prediction},
+  title  = {Accelerating Accelerators: Fast Surrogate Models for Beam Prediction},
   year   = {2020},
 }
 
@@ -211,6 +212,18 @@
   publisher = {bookdown},
   title     = {Limitations of Interpretable Machine Learning Methods},
   year      = {2019},
+}
+
+@Article{Jin2013,
+  author  = {Jin,Kui and Suchoski,Richard and Fackler,Sean and Zhang,Yi and Pan,Xiaoqing and Greene,Richard L. and Takeuchi,Ichiro},
+  journal = {APL Materials},
+  title   = {Combinatorial search of superconductivity in Fe-B composition spreads},
+  year    = {2013},
+  number  = {4},
+  pages   = {042101},
+  volume  = {1},
+  doi     = {10.1063/1.4822435},
+  eprint  = {https://doi.org/10.1063/1.4822435},
 }
 
 @Comment{jabref-meta: databaseType:bibtex;}
