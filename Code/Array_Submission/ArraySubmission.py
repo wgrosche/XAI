@@ -97,16 +97,16 @@ elif feature_setting == "Gamma":
     from  GammaDuffing import Duffing
 """
 if feature_setting == "Base":
-    num_samples_ml = 100
+    num_samples_ml = 100000
     from  BaseDuffing import Duffing
 elif feature_setting == "Random":
-    num_samples_ml = 100
+    num_samples_ml = 100000
     from  RandomDuffing import Duffing
 elif feature_setting == "Energy":
-    num_samples_ml = 100
+    num_samples_ml = 100000
     from  EnergyDuffing import Duffing
 elif feature_setting == "Gamma":
-    num_samples_ml = 10
+    num_samples_ml = 100
     from  GammaDuffing import Duffing
     
 
