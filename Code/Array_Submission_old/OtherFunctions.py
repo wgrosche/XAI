@@ -166,7 +166,7 @@ class Bootstrapper():
     
     
 class MyLime(shap.other.LimeTabular):
-    def __init__(self, model, data, mode="classification", discretize_continuous = False):
+    def __init__(self, model, data, mode="classification"):
         self.model = model
         assert mode in ["classification", "regression"]
         self.mode = mode
@@ -174,7 +174,7 @@ class MyLime(shap.other.LimeTabular):
         if str(type(data)).endswith("pandas.core.frame.DataFrame'>"):
             data = data.values
         self.data = data
-        self.explainer = lime.lime_tabular.LimeTabularExplainer(data, mode=mode, discretize_continuous=discretize_continuous)
+        self.explainer = lime.lime_tabular.LimeTabularExplainer(data, mode=mode)
         self.out_dim = 1#self.model(data[0:1]).shape[1]
             
     def attributions(self, X, num_samples=5000, num_features=None):
