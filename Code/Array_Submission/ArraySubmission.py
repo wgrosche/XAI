@@ -65,7 +65,8 @@ parameter_list = [{'alpha' : -1.0, 'beta' : 1.0, 'gamma' : 0.37, 'delta' : 0.3, 
                   {'alpha' : -1.0, 'beta' : 1.0, 'gamma' : 0.37, 'delta' : 0.3, 'omega' : 0.1},
                   {'alpha' : -1.0, 'beta' : 1.0, 'gamma' : 0.5, 'delta' : 0.3, 'omega' : 1.2}]
 
-"""[{'alpha' : 1.0, 'beta' : 1.0, 'gamma' : 0.37, 'delta' : 0.3, 'omega' : 1.2}, 
+"""
+[{'alpha' : 1.0, 'beta' : 1.0, 'gamma' : 0.37, 'delta' : 0.3, 'omega' : 1.2}, 
                   {'alpha' : 1.0, 'beta' : -0.5, 'gamma' : 0.37, 'delta' : 0.3, 'omega' : 1.2},
                   {'alpha' : 1.0, 'beta' : -0.5, 'gamma' : 0.37, 'delta' : 1.0, 'omega' : 1.2}, 
                   {'alpha' : 1.0, 'beta' : -0.5, 'gamma' : 0.5, 'delta' : 0.3, 'omega' : 1.2},
@@ -123,7 +124,7 @@ if __name__ == '__main__':
     
     X = X_test
     y = y_test
-"""    
+    
     # Create a basic model instance
     if model_setting == "Complex":
         model = MLModel()
@@ -166,7 +167,7 @@ if __name__ == '__main__':
     elif model_setting == "True":
         model = duffing
         model_ = duffing.predict
-    
+"""    
     def lime_x(X):
         return model.predict(X)[:,0]
     def lime_v(X):
