@@ -20,11 +20,12 @@ Settings=["Base", "Random", "Energy","Gamma"]
 Models=["True", "Complex", "Simple"]# 
 Params = [{'alpha' : -1.0, 'beta' : 1.0, 'gamma' : 0.37, 'delta' : 0.3, 'omega' : 1.2}, 
                   {'alpha' : -1.0, 'beta' : 1.0, 'gamma' : 0.37, 'delta' : 1.0, 'omega' : 1.2},
-                  {'alpha' : 1.0, 'beta' : 1.0, 'gamma' : 0.37, 'delta' : 0.3, 'omega' : 1.2}, 
+                  {'alpha' : 1.0, 'beta' : 1.0, 'gamma' : 0.37, 'delta' : 0.3, 'omega' : 1.2}]
+""", 
                   {'alpha' : -1.0, 'beta' : -1.0, 'gamma' : 0.37, 'delta' : 0.3, 'omega' : 1.2},
                   {'alpha' : -1.0, 'beta' : 1.0, 'gamma' : 0.37, 'delta' : 0.3, 'omega' : 0.1},
                   {'alpha' : -1.0, 'beta' : 1.0, 'gamma' : 0.5, 'delta' : 0.3, 'omega' : 1.2}]
-
+"""
 """[{'alpha' : 1.0, 'beta' : 1.0, 'gamma' : 0.37, 'delta' : 0.3, 'omega' : 1.2}, 
           {'alpha' : 1.0, 'beta' : -0.5, 'gamma' : 0.37, 'delta' : 0.3, 'omega' : 1.2},
           {'alpha' : 1.0, 'beta' : -0.5, 'gamma' : 0.37, 'delta' : 1.0, 'omega' : 1.2}, 
@@ -58,7 +59,7 @@ for Setting in Settings:
                 fh.writelines("#SBATCH --ntasks=1\n")
                 fh.writelines("#SBATCH --ntasks-per-node=1\n")
                 fh.writelines("#SBATCH --cpus-per-task=1\n")
-                fh.writelines("#SBATCH --output=/data/user/grosche_w/XAI/XAI/Array_Submission/Logs/"+Setting+"_"+Model+"_"+str(param_idx)+"_out_%j.log\n")
+                fh.writelines("#SBATCH --output=/data/user/grosche_w/XAI/XAI/Code/Array_Submission/Logs/"+Setting+"_"+Model+"_"+str(param_idx)+"_out_%j.log\n")
                 fh.writelines("#SBATCH --job-name="+Setting+"_"+str(param_idx)+"_run\n")
                 fh.writelines("""NOW=$(date +"%m-%d-%Y")\n""")
                 fh.writelines("""NOW2=$(date +"%r")\n""")

@@ -37,12 +37,13 @@ import os
 import sys
 
 
+
 class Duffing():
     """
         Class for the Duffing Oscillator
     """
     def __init__(self, parameters = {'alpha': [0.3], 'beta': [-0.1], 'gamma': [0.37], 'delta': [0.3], 'omega': [1.2]}, 
-                 labels = ['xt','vt'], features = ['x0','v0', 't', 'rand'], scaler = None):
+                 labels = ['xt','vt'], features = ['x0','v0', 't', 'energy'], scaler = None):
         """
             Define Parameter Configuration to Model
 
@@ -147,7 +148,7 @@ class Duffing():
             X[val_range_low:val_range_high,:] = np.hstack((x0*np.ones(samples).reshape(-1,1), 
                                            v0*np.ones(samples).reshape(-1,1),
                                            t_vals.reshape(-1,1),
-                                           np.random.uniform(-1,1,samples).reshape(-1,1),
+                                           self.energy(x0, v0)*np.ones(samples).reshape(-1,1),
                                            traj_x.reshape(-1,1), 
                                            traj_v.reshape(-1,1)))
         
@@ -156,7 +157,7 @@ class Duffing():
 
     def scale_features(self):
         if self.scaler == None:
-            self.scaler = MinMaxScaler(feature_range=[0,1])
+            self.scaler = MinMaxScaler(feature_range=[-1,1])
             self.X_df[self.features] = self.scaler.fit_transform(self.X_df[self.features].values)
         else: return
 

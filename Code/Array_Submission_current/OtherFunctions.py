@@ -112,24 +112,7 @@ class NumericExplainer():
     
     
 class Bootstrapper():
-    """
-    Function to perform bootstrapping of feature importances.
-    Takes model and a dataset and applies an explainer to the model.
-    Calculates confidence intervals by bootstrapping.
-    """
     def __init__(self, model, data, features, labels, suffix, explainer_type, num_straps = 50, back_size = 100):
-        """
-        Initialisation
-        
-        Parameters:
-        
-        model: model to be evaluated with explainability methods, f: features -> labels
-        data: dataset to be used as the background dataset for the explainers (2d array(features, n))
-        features: data features (list)
-        labels: data labels (list)
-        suffix: str to use when saving the results
-        
-        """
         self.explainer_type = explainer_type
         self.model = model
         self.data = data
@@ -140,14 +123,6 @@ class Bootstrapper():
         self.suffix = suffix
         
     def bootstrap(self, X):
-        """
-        Function that performs the bootstrapping. 
-        Randomly changes the background dataset and records the new attributions
-        Parameters:
-        X : instances to explain
-        Returns:
-        array of mean feature attributions for the samples in X
-        """
         self.values = np.empty((self.num_straps, len(self.labels), len(self.features)))
         self.mean_std_arr = np.empty((2, len(self.labels), len(self.features)))
         for i in range(self.num_straps):
@@ -171,10 +146,6 @@ class Bootstrapper():
         return self.mean_std_arr
     
     def to_df(self):
-        """
-        transforms the bootstrap results to a dataframe
-        saves the bootstrapped samples dataframe
-        """
         self.bootstrap_df = self.x_list.copy()
         for k, col in enumerate(["mean", "std"]):
             for j in range(len(self.labels)):
@@ -195,19 +166,7 @@ class Bootstrapper():
     
     
 class MyLime(shap.other.LimeTabular):
-    """
-    Implementation of LIME tabular to allow use with the models used in this work.
-    """
     def __init__(self, model, data, mode="classification", discretize_continuous = False):
-        """
-        Initialisation
-        
-        Parameters:
-        model : model to evaluate with LIME, either tensorflow NN or function: vector -> scalar
-        data : background dataset to be used with LIME for the purposes of scaling feature perturbations
-        mode : only regression should be used in this case. defines the mode to use with LIME
-        discretize continuous : passes the setting for data discretization to LimeTabularExplainer
-        """
         self.model = model
         assert mode in ["classification", "regression"]
         self.mode = mode
@@ -218,19 +177,9 @@ class MyLime(shap.other.LimeTabular):
         self.explainer = lime.lime_tabular.LimeTabularExplainer(data, mode=mode, discretize_continuous=discretize_continuous)
         self.out_dim = 1#self.model(data[0:1]).shape[1]
             
-    def attributions(self, X, num_samples=5000):
-        """
-        Feature attributions made my LIME
-        
-        Parameters:
-        X : data for which the feature attributions are to be calculated, 2d array
-        num_samples : number of samples to be passed through the model to generate
-                      labels for the linear surrogate model
-        Returns:
-        Feature attributions made by LIME: array of shape (num_labels, num_features, length X)
-        """
+    def attributions(self, X, num_samples=5000, num_features=None):
         try:
-            num_features = X.shape[1] 
+            num_features = X.shape[1] if num_features is None else num_features
         except:
             print('exception')
             num_features = 1
@@ -252,10 +201,10 @@ class MyLime(shap.other.LimeTabular):
     
     
     
+"""
+Define and Create Model
+"""
 def MLModel():
-    """
-    The DNN or "complex" model.
-    """
     opt = Adam(learning_rate=0.001, beta_1=0.7)
     loss='mse'
     model = Sequential([
@@ -279,9 +228,6 @@ def MLModel():
   
     
 def SimpleModel():
-    """
-    The SNN or "simple" model.
-    """
     opt = Adam(learning_rate=0.001, beta_1=0.7)
     loss='mse'
     model = Sequential([

@@ -37,12 +37,13 @@ import os
 import sys
 
 
+
 class Duffing():
     """
         Class for the Duffing Oscillator
     """
     def __init__(self, parameters = {'alpha': [0.3], 'beta': [-0.1], 'gamma': [0.37], 'delta': [0.3], 'omega': [1.2]}, 
-                 labels = ['xt','vt'], features = ['x0','v0', 't'], scaler = None):
+                 labels = ['xt','vt'], features = ['x0','v0', 't', 'energy'], scaler = None):
         """
             Define Parameter Configuration to Model
 
@@ -55,11 +56,13 @@ class Duffing():
             omega : float, angular frequency of the periodic driving force
         """   
         self.labels = labels
-        self.parameters = parameters
         self.features = features
         self.scaler = scaler
+        self.parameters = parameters
         self.suffix = "_"+str(parameters['alpha'])+"_"+str(parameters['beta'])+"_"+str(parameters['gamma'])+"_"+str(parameters['delta'])+"_"+str(parameters['omega'])
 
+
+            
         
     def eom(self, t, u):
         """
@@ -134,15 +137,18 @@ class Duffing():
             #Generate random starting positions
             x0 = (x_max - x_min) * np.random.random_sample() + x_min
             v0 = (v_max - v_min) * np.random.random_sample() + v_min
-            # Do something with the current parameter combination in ``dict_``
+
             #Generate a trajectory
             trajectory = solve_ivp(self.eom, [0, end_time], [x0,v0], t_eval = t_vals, events = [self.termination_event])
             traj_cutoff =  samples - len(trajectory.y[0])
             traj_x = np.append(trajectory.y[0].reshape(-1,1), trajectory.y[0][-1]*np.ones(traj_cutoff).reshape(-1,1))
             traj_v = np.append(trajectory.y[1].reshape(-1,1), trajectory.y[1][-1]*np.ones(traj_cutoff).reshape(-1,1))
-            X[i*samples:(i+1)*samples,:] = np.hstack((x0*np.ones(samples).reshape(-1,1), 
+            val_range_low = i*samples
+            val_range_high = (i+1)*samples
+            X[val_range_low:val_range_high,:] = np.hstack((x0*np.ones(samples).reshape(-1,1), 
                                            v0*np.ones(samples).reshape(-1,1),
                                            t_vals.reshape(-1,1),
+                                           self.energy(x0, v0)*np.ones(samples).reshape(-1,1),
                                            traj_x.reshape(-1,1), 
                                            traj_v.reshape(-1,1)))
         
@@ -151,7 +157,7 @@ class Duffing():
 
     def scale_features(self):
         if self.scaler == None:
-            self.scaler = MinMaxScaler(feature_range=[0,1])
+            self.scaler = MinMaxScaler(feature_range=[-1,1])
             self.X_df[self.features] = self.scaler.fit_transform(self.X_df[self.features].values)
         else: return
 
@@ -174,6 +180,7 @@ class Duffing():
             y[i] = [traj.y[0][-1], traj.y[1][-1]]
             
         return y
+
     def predict_x(self, X):
         return self.predict(X)[:,0]
 

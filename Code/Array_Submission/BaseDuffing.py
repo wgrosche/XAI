@@ -151,7 +151,7 @@ class Duffing():
 
     def scale_features(self):
         if self.scaler == None:
-            self.scaler = MinMaxScaler(feature_range=[-1,1])
+            self.scaler = MinMaxScaler(feature_range=[0,1])
             self.X_df[self.features] = self.scaler.fit_transform(self.X_df[self.features].values)
         else: return
 

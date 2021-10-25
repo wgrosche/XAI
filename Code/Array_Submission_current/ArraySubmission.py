@@ -3,8 +3,6 @@ import numpy as np
 import pandas as pd
 from tqdm import tqdm
 import pickle
-import os
-import sys
 
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.model_selection import train_test_split
@@ -34,7 +32,16 @@ rng = np.random.RandomState(42)
 tf.random.set_seed(42)
 np.random.seed(42)
 
-# read in parameter configuration from the batch commit
+
+import os
+import sys
+
+
+#idx = int(os.environ["SLURM_ARRAY_TASK_ID"])
+
+#feature_setting = str(os.environ["Setting"])
+
+#model_setting = str(os.environ["Model"])
 idx = int(sys.argv[1])
 model_setting = sys.argv[2]
 feature_setting = sys.argv[3]
@@ -58,9 +65,24 @@ parameter_list = [{'alpha' : -1.0, 'beta' : 1.0, 'gamma' : 0.37, 'delta' : 0.3, 
                   {'alpha' : -1.0, 'beta' : 1.0, 'gamma' : 0.37, 'delta' : 0.3, 'omega' : 0.1},
                   {'alpha' : -1.0, 'beta' : 1.0, 'gamma' : 0.5, 'delta' : 0.3, 'omega' : 1.2}]
 
+"""
+[{'alpha' : 1.0, 'beta' : 1.0, 'gamma' : 0.37, 'delta' : 0.3, 'omega' : 1.2}, 
+                  {'alpha' : 1.0, 'beta' : -0.5, 'gamma' : 0.37, 'delta' : 0.3, 'omega' : 1.2},
+                  {'alpha' : 1.0, 'beta' : -0.5, 'gamma' : 0.37, 'delta' : 1.0, 'omega' : 1.2}, 
+                  {'alpha' : 1.0, 'beta' : -0.5, 'gamma' : 0.5, 'delta' : 0.3, 'omega' : 1.2},
+                  {'alpha' : 1.0, 'beta' : -0.5, 'gamma' : 0.37, 'delta' : 0.0, 'omega' : 1.2},
+                  {'alpha' : -1.0, 'beta' : 1.0, 'gamma' : 0.37, 'delta' : 0.3, 'omega' : 1.2},
+                  {'alpha' : -1.0, 'beta' : 1.0, 'gamma' : 0.37, 'delta' : 1.0, 'omega' : 1.2}, 
+                  {'alpha' : -1.0, 'beta' : 1.0, 'gamma' : 0.5, 'delta' : 0.3, 'omega' : 1.2},
+                  {'alpha' : -1.0, 'beta' : 1.0, 'gamma' : 0.0, 'delta' : 0.3, 'omega' : 0.0},
+                  {'alpha' : -1.0, 'beta' : -1.0, 'gamma' : 0.37, 'delta' : 0.3, 'omega' : 1.2},
+                  {'alpha' : 0.0, 'beta' : 0.0, 'gamma' : 0.37, 'delta' : 0.3, 'omega' : 1.2}]
+"""
+
 dict_param = parameter_list[idx]
 
 from OtherFunctions import *
+"""
 if feature_setting == "Base":
     num_samples_ml = 100000
     from  BaseDuffing import Duffing
@@ -73,21 +95,35 @@ elif feature_setting == "Energy":
 elif feature_setting == "Gamma":
     num_samples_ml = 1000
     from  GammaDuffing import Duffing
+"""
+if feature_setting == "Base":
+    num_samples_ml = 100000
+    from  BaseDuffing import Duffing
+elif feature_setting == "Random":
+    num_samples_ml = 100000
+    from  RandomDuffing import Duffing
+elif feature_setting == "Energy":
+    num_samples_ml = 100000
+    from  EnergyDuffing import Duffing
+elif feature_setting == "Gamma":
+    num_samples_ml = 100
+    from  GammaDuffing import Duffing
     
 
 
 if __name__ == '__main__':
-    # initialise the duffing oscillator in the parameter configuration of choice
     duffing = Duffing(parameters = dict_param)
-    # define the suffix to use when saving objects
+    eom = duffing.eom
     suffix = feature_setting + "_" + model_setting + "_" + duffing.suffix
-    # generate training and test samples
+
     end_time = 100
     duffing.generate(num_samples_ml, samples = 100, end_time = end_time) #samples prev 100
     duffing.scale_features()
     X_train, X_test, y_train, y_test = train_test_split(duffing.X_df[duffing.features], 
                                                         duffing.X_df[duffing.labels], test_size=0.1, random_state=42)
     
+    X = X_test
+    y = y_test
     
     # Create a basic model instance
     if model_setting == "Complex":
@@ -100,7 +136,7 @@ if __name__ == '__main__':
     
     if (model_setting == "Simple") or (model_setting == "Complex"):
         """
-        Train Model if the model is a NN
+        #Train Model
         """
         callbacks = [tf.keras.callbacks.EarlyStopping(monitor='val_loss',patience=3),
                      tf.keras.callbacks.EarlyStopping(monitor='loss', patience=3)]
@@ -114,19 +150,14 @@ if __name__ == '__main__':
         with open('Models/TrainingHistory/'+suffix, 'wb') as file_pi:
             pickle.dump(history.history, file_pi)
             
-    # since some explainers require the function to be 
-    # either NN or function we define model_ 
-    # to implement predict for duffing
+            
     if model_setting == "Complex":
         model_ = model
     elif model_setting == "Simple":
         model_ = model
     elif model_setting == "True":
         model_ = duffing.predict
-        
     """
-    If models are already trained and just need to be loaded 
-    comment out the training block above and comment in this block:
     if model_setting == "Complex":
         model = tf.keras.models.load_model("Models/Model"+suffix)
         model_ = model
@@ -137,22 +168,16 @@ if __name__ == '__main__':
         model = duffing
         model_ = duffing.predict
     """    
-    """
-    My implementation of LIME requires each label to be predicted individually.
-    This is somewhat inefficient but we use this hack to facilitate this.
-    """
     def lime_x(X):
         return model.predict(X)[:,0]
     def lime_v(X):
         return model.predict(X)[:,1]
     
+
+    explainers = ["lime"]#["kernel", "sampling", "lime", "numeric"]
     lime_models = [lime_x, lime_v]
-    # list of explainers to apply to the models
-    explainers = ["kernel", "sampling", "lime", "numeric"]
-    
-    # define background sample to use when evaluating SHAP and LIME
+
     background = shap.sample(X_test, 100)
-    # choose samples on which to evaluate SHAP And LIME
     choice = X_test.iloc[np.sort(np.random.choice(X_test.shape[0], 100, replace =False))]
 
     
@@ -172,9 +197,8 @@ if __name__ == '__main__':
             temp_vals = temp_explainer.feature_att(choice)
         else:
             print("not a valid explainer type")
-        # save the explanations along with the features that led to them
         big_df = big_df.append(duffing.vals_to_df(temp_vals, choice, explainer = explainer, suffix = suffix))
 
 
-    big_df.to_csv("Results/explainer_dataframe_"+suffix+".csv")  
+    big_df.to_csv("Results/discretised_explainer_dataframe_"+suffix+".csv")  
 

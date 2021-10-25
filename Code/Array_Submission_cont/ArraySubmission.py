@@ -65,7 +65,8 @@ parameter_list = [{'alpha' : -1.0, 'beta' : 1.0, 'gamma' : 0.37, 'delta' : 0.3, 
                   {'alpha' : -1.0, 'beta' : 1.0, 'gamma' : 0.37, 'delta' : 0.3, 'omega' : 0.1},
                   {'alpha' : -1.0, 'beta' : 1.0, 'gamma' : 0.5, 'delta' : 0.3, 'omega' : 1.2}]
 
-"""[{'alpha' : 1.0, 'beta' : 1.0, 'gamma' : 0.37, 'delta' : 0.3, 'omega' : 1.2}, 
+"""
+[{'alpha' : 1.0, 'beta' : 1.0, 'gamma' : 0.37, 'delta' : 0.3, 'omega' : 1.2}, 
                   {'alpha' : 1.0, 'beta' : -0.5, 'gamma' : 0.37, 'delta' : 0.3, 'omega' : 1.2},
                   {'alpha' : 1.0, 'beta' : -0.5, 'gamma' : 0.37, 'delta' : 1.0, 'omega' : 1.2}, 
                   {'alpha' : 1.0, 'beta' : -0.5, 'gamma' : 0.5, 'delta' : 0.3, 'omega' : 1.2},
@@ -96,16 +97,16 @@ elif feature_setting == "Gamma":
     from  GammaDuffing import Duffing
 """
 if feature_setting == "Base":
-    num_samples_ml = 100
+    num_samples_ml = 100000
     from  BaseDuffing import Duffing
 elif feature_setting == "Random":
-    num_samples_ml = 100
+    num_samples_ml = 100000
     from  RandomDuffing import Duffing
 elif feature_setting == "Energy":
-    num_samples_ml = 100
+    num_samples_ml = 100000
     from  EnergyDuffing import Duffing
 elif feature_setting == "Gamma":
-    num_samples_ml = 10
+    num_samples_ml = 100
     from  GammaDuffing import Duffing
     
 
@@ -123,7 +124,7 @@ if __name__ == '__main__':
     
     X = X_test
     y = y_test
-"""    
+    
     # Create a basic model instance
     if model_setting == "Complex":
         model = MLModel()
@@ -135,7 +136,7 @@ if __name__ == '__main__':
     
     if (model_setting == "Simple") or (model_setting == "Complex"):
         """
-        Train Model
+        #Train Model
         """
         callbacks = [tf.keras.callbacks.EarlyStopping(monitor='val_loss',patience=3),
                      tf.keras.callbacks.EarlyStopping(monitor='loss', patience=3)]
@@ -156,7 +157,7 @@ if __name__ == '__main__':
         model_ = model
     elif model_setting == "True":
         model_ = duffing.predict
-"""
+    """
     if model_setting == "Complex":
         model = tf.keras.models.load_model("Models/Model"+suffix)
         model_ = model
@@ -166,7 +167,7 @@ if __name__ == '__main__':
     elif model_setting == "True":
         model = duffing
         model_ = duffing.predict
-    
+    """    
     def lime_x(X):
         return model.predict(X)[:,0]
     def lime_v(X):
