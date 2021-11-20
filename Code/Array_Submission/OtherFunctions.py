@@ -198,7 +198,7 @@ class MyLime(shap.other.LimeTabular):
     """
     Implementation of LIME tabular to allow use with the models used in this work.
     """
-    def __init__(self, model, data, mode="classification", discretize_continuous = False):
+    def __init__(self, model, data, mode="classification", discretize_continuous = False, kernel_width = None):
         """
         Initialisation
         
@@ -215,7 +215,7 @@ class MyLime(shap.other.LimeTabular):
         if str(type(data)).endswith("pandas.core.frame.DataFrame'>"):
             data = data.values
         self.data = data
-        self.explainer = lime.lime_tabular.LimeTabularExplainer(data, mode=mode, discretize_continuous=discretize_continuous)
+        self.explainer = lime.lime_tabular.LimeTabularExplainer(data, mode=mode, discretize_continuous=discretize_continuous, kernel_width = kernel_width)
         self.out_dim = 1#self.model(data[0:1]).shape[1]
             
     def attributions(self, X, num_samples=5000):

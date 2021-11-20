@@ -94,7 +94,7 @@ class Duffing():
     termination_event.terminal = True
 
 
-    def generate(self, num_samples = int(5e1), samples=10, end_time=100, gridded=False, num_gammas = 1):
+    def generate(self, num_samples = int(5e1), samples=10, end_time=100, gridded=False, num_gammas = 1, pos = None):
         """
             Generates training samples using scipy.integrate.odeint
             to calculate the temporal evolution of a Duffing system.
@@ -126,16 +126,20 @@ class Duffing():
         #Initialise the output arrays        
         X = np.empty((num_samples*samples, len(np.hstack((self.features, self.labels)))))
         #Define the t_range to draw from
-        t_range = np.linspace(0, end_time, 100, endpoint=False)
+        t_range = np.linspace(0, end_time, samples, endpoint=False)
         t_vals = np.sort(np.random.choice(t_range, size = samples, replace=False))
 
         #Generate num_samples samples
         for i in tqdm(range(num_samples), desc="Generating Data…", ascii=False, ncols=75):
-            #Generate random starting positions
-            x0 = (x_max - x_min) * np.random.random_sample() + x_min
-            v0 = (v_max - v_min) * np.random.random_sample() + v_min
-            # Do something with the current parameter combination in ``dict_``
-            #Generate a trajectory
+            if pos == None:
+                #Generate random starting positions
+                x0 = (x_max - x_min) * np.random.random_sample() + x_min
+                v0 = (v_max - v_min) * np.random.random_sample() + v_min
+            else:
+                #Use fixed starting positions
+                x0 = pos[0]
+                v0 = pos[1]
+                #Generate a trajectory
             trajectory = solve_ivp(self.eom, [0, end_time], [x0,v0], t_eval = t_vals, events = [self.termination_event])
             traj_cutoff =  samples - len(trajectory.y[0])
             traj_x = np.append(trajectory.y[0].reshape(-1,1), trajectory.y[0][-1]*np.ones(traj_cutoff).reshape(-1,1))
@@ -145,7 +149,7 @@ class Duffing():
                                            t_vals.reshape(-1,1),
                                            traj_x.reshape(-1,1), 
                                            traj_v.reshape(-1,1)))
-        
+
         self.X_df = pd.DataFrame(X, columns = np.hstack((self.features, self.labels)))
         return self.X_df
 
